@@ -11,18 +11,18 @@ import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 // ============================================================================
 const CONFIG = {
   orbits: [
-    { radius: 23, speed: 0.25, angle: 0, color: 0xc6ff00, thickness: 0.05, opacity: 0.35, tiltX: 1, tiltY: 0, tiltZ: 0 }, //green
-    { radius: 23, speed: -0.18, angle: 0, color: 0x38bdf8, thickness: 0.05, opacity: 0.35, tiltX: 0, tiltY: 1, tiltZ: 0 }, // blue
-    { radius: 23, speed: 0.12, angle: 0, color: 0xa855f7, thickness: 0.05, opacity: 0.35, tiltX: 0, tiltY: 0, tiltZ: 1 }, //purple
+    { radius: 19.5, speed: 0.25, angle: 0, color: 0xc6ff00, thickness: 0.05, opacity: 0.35, tiltX: 1, tiltY: 0, tiltZ: 0 }, //green
+    { radius: 19.5, speed: -0.18, angle: 0, color: 0x38bdf8, thickness: 0.05, opacity: 0.35, tiltX: 0, tiltY: 1, tiltZ: 0 }, // blue
+    { radius: 19.5, speed: 0.12, angle: 0, color: 0xa855f7, thickness: 0.05, opacity: 0.35, tiltX: 0, tiltY: 0, tiltZ: 1 }, //purple
   ],
 
   planets: [
-    { name: "Next.js", orbitIndex: 0, angleOffset: 0, color: 0xffffff, icon: "N", size: 4.4, speedScale: 1 },
-    { name: "React", orbitIndex: 0, angleOffset: Math.PI, color: 0x61dafb, icon: "atom", size: 4.4, speedScale: 1 },
-    { name: "TypeScript", orbitIndex: 1, angleOffset: Math.PI / 2, color: 0x3178c6, icon: "TS", size: 4.4, speedScale: 1 },
-    { name: "Tailwind", orbitIndex: 1, angleOffset: (Math.PI * 3) / 2, color: 0x06b6d4, icon: "wave", size: 4.4, speedScale: 1 },
-    { name: "Three.js", orbitIndex: 2, angleOffset: Math.PI / 4, color: 0xffffff, icon: "triangle", size: 4.4, speedScale: 1 },
-    { name: "Node.js", orbitIndex: 2, angleOffset: (Math.PI * 5) / 4, color: 0x5fa04e, icon: "hexagon", size: 4.4, speedScale: 1 },
+    { name: "Next.js", orbitIndex: 0, angleOffset: 0, color: 0xffffff, icon: "N", size: 3.9, speedScale: 1 },
+    { name: "React", orbitIndex: 0, angleOffset: Math.PI, color: 0x61dafb, icon: "atom", size: 3.9, speedScale: 1 },
+    { name: "TypeScript", orbitIndex: 1, angleOffset: Math.PI / 2, color: 0x3178c6, icon: "TS", size: 3.9, speedScale: 1 },
+    { name: "Tailwind", orbitIndex: 1, angleOffset: (Math.PI * 3) / 2, color: 0x06b6d4, icon: "wave", size: 3.9, speedScale: 1 },
+    { name: "Three.js", orbitIndex: 2, angleOffset: Math.PI / 4, color: 0xffffff, icon: "triangle", size: 3.9, speedScale: 1 },
+    { name: "Node.js", orbitIndex: 2, angleOffset: (Math.PI * 5) / 4, color: 0x5fa04e, icon: "hexagon", size: 3.9, speedScale: 1 },
   ],
 
   // Round icon badges (reference image style) — no text boxes
@@ -54,6 +54,9 @@ const CONFIG = {
     darkPlasticMetalness: 0.25,
     darkPlasticRoughness: 0.55,
     darkPlasticEnvMapIntensity: 0.7,
+
+    // Overall laptop size (1 = original model size)
+    scale: 0.85,
 
     // Position Controls (X, Y, Z)
     positionX: 0,         // Horizontal position (Left/Right)
@@ -89,6 +92,14 @@ const CONFIG = {
     positionZ: 75,
     near: 0.1,
     far: 1000,
+  },
+
+  // Responsive: jab container ki width/height ratio is threshold se kam ho
+  // (choti screens), camera utna peeche chala jata hai taake poora scene
+  // frame ke andar rahe.
+  responsive: {
+    aspectThreshold: 1.15,
+    maxZoomOut: 1.4,
   },
 
   controls: {
@@ -217,6 +228,7 @@ export default function LaptopOrbitScene() {
     // Laptop Group Position (X, StartY, Z)
     const macGroup = new THREE.Group();
     macGroup.position.set(CONFIG.laptop.positionX, CONFIG.laptop.startY, CONFIG.laptop.positionZ);
+    macGroup.scale.setScalar(CONFIG.laptop.scale);
     scene.add(macGroup);
 
     const lidGroup = new THREE.Group();
@@ -259,7 +271,7 @@ export default function LaptopOrbitScene() {
     const textureLoader = new THREE.TextureLoader();
 
     const screenTexture = textureLoader.load(
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1N5WtwLC8FNamx_p71PZ4_ZMc82TJcRLXNatUOA9isg&s=10",
+      "/images/screen-texture.jpg",
       (texture) => {
         texture.flipY = false;
         texture.colorSpace = THREE.SRGBColorSpace;
@@ -272,7 +284,7 @@ export default function LaptopOrbitScene() {
     );
 
     const keyboardTexture = textureLoader.load(
-      "https://ksenia-k.com/img/threejs/keyboard-overlay.png"
+      "/images/keyboard-overlay.png"
     );
 
     const screenMaterial = new THREE.MeshBasicMaterial({
@@ -513,7 +525,7 @@ export default function LaptopOrbitScene() {
 
     const loader = new GLTFLoader();
     loader.load(
-      "https://ksenia-k.com/models/mac-noUv.glb",
+      "/models/mac-noUv.glb",
       (glb) => {
         if (disposed) return;
         const topObj = glb.scene.getObjectByName("_top");
@@ -631,6 +643,14 @@ export default function LaptopOrbitScene() {
         if (!width || !height) return;
 
         camera.aspect = width / height;
+        const zoomOut =
+          camera.aspect < CONFIG.responsive.aspectThreshold
+            ? Math.min(
+                CONFIG.responsive.maxZoomOut,
+                Math.pow(CONFIG.responsive.aspectThreshold / camera.aspect, 0.6)
+              )
+            : 1;
+        camera.position.z = CONFIG.camera.positionZ * zoomOut;
         camera.updateProjectionMatrix();
         renderer.setSize(width, height);
       }
