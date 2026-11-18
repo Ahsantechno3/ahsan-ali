@@ -3,10 +3,10 @@
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { ArrowRight, Play } from "lucide-react";
-import LaptopVisual from "./LaptopVisual";
-
 // Three.js must only run in the browser.
-const LaptopScene = dynamic(() => import("./LaptopScene"), { ssr: false });
+const LaptopOrbitScene = dynamic(() => import("./LaptopOrbitScene"), {
+  ssr: false,
+});
 
 const fadeUp = {
   initial: { opacity: 0, y: 24 },
@@ -60,7 +60,7 @@ const badgeFloat = (duration: number, delay: number) => ({
 });
 
 const badgeBase =
-  "absolute z-20 flex items-center justify-center rounded-full border shadow-[0_20px_45px_rgba(0,0,0,0.55)]";
+  "pointer-events-none absolute z-20 flex items-center justify-center rounded-full border shadow-[0_20px_45px_rgba(0,0,0,0.55)]";
 
 export default function Hero() {
   return (
@@ -153,48 +153,14 @@ export default function Hero() {
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.7, delay: 0.2 }}
-          className="relative mx-auto h-[400px] w-full max-w-[580px] sm:h-[470px] lg:h-[510px]"
+          className="relative mx-auto h-[380px] w-full max-w-[580px] sm:h-[460px] lg:h-[540px]"
         >
-          {/* Three.js ambient rings + particles */}
-          <div className="absolute inset-0">
-            <LaptopScene />
-          </div>
-
-          {/* SVG elliptical orbit rings */}
-          <svg
-            className="absolute left-1/2 top-1/2 w-[112%] max-w-none -translate-x-1/2 -translate-y-1/2 -rotate-[9deg]"
-            viewBox="0 0 600 300"
-            fill="none"
-            aria-hidden="true"
-          >
-            <ellipse
-              cx="300"
-              cy="150"
-              rx="292"
-              ry="104"
-              stroke="#C6FF00"
-              strokeWidth="2.4"
-              opacity="0.85"
-              style={{ filter: "drop-shadow(0 0 9px rgba(198,255,0,0.85))" }}
-            />
-            <ellipse
-              cx="300"
-              cy="150"
-              rx="252"
-              ry="84"
-              stroke="#C6FF00"
-              strokeWidth="1.2"
-              opacity="0.35"
-            />
-          </svg>
-
           {/* glow pool underneath */}
-          <div className="absolute bottom-[4%] left-1/2 h-24 w-[78%] -translate-x-1/2 rounded-[100%] bg-[#C6FF00]/35 blur-[46px]" />
-          <div className="glow-pulse absolute bottom-[9%] left-1/2 h-10 w-[46%] -translate-x-1/2 rounded-[100%] bg-[#C6FF00]/45 blur-[26px]" />
+          <div className="pointer-events-none absolute bottom-[4%] left-1/2 h-24 w-[78%] -translate-x-1/2 rounded-[100%] bg-[#C6FF00]/30 blur-[46px]" />
 
-          {/* laptop */}
-          <div className="absolute left-1/2 top-[46%] -translate-x-1/2 -translate-y-1/2">
-            <LaptopVisual />
+          {/* 3D MacBook orbit scene */}
+          <div className="absolute inset-0">
+            <LaptopOrbitScene />
           </div>
 
           {/* circular floating badges */}
@@ -217,7 +183,7 @@ export default function Hero() {
           </motion.span>
           <motion.span
             {...badgeFloat(5.4, 0.4)}
-            className="absolute right-[3%] top-[40%] z-20 flex h-12 w-12 items-end justify-end rounded-[12px] bg-[#F7DF1E] p-1.5 shadow-[0_20px_45px_rgba(0,0,0,0.5)] sm:h-14 sm:w-14"
+            className="pointer-events-none absolute right-[3%] top-[40%] z-20 flex h-12 w-12 items-end justify-end rounded-[12px] bg-[#F7DF1E] p-1.5 shadow-[0_20px_45px_rgba(0,0,0,0.5)] sm:h-14 sm:w-14"
           >
             <span className="font-heading text-base font-black leading-none text-black">
               JS
