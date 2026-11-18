@@ -1,0 +1,96 @@
+"use client";
+
+import { useState } from "react";
+import {
+  Box,
+  Clapperboard,
+  Code2,
+  FileCode2,
+  MousePointerClick,
+  Sparkles,
+  Wind,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { techStack } from "@/lib/data";
+import type { TechItem } from "@/lib/data";
+import Reveal from "./Reveal";
+import SectionTag from "./SectionTag";
+
+const techIcons: Record<string, LucideIcon> = {
+  "Next.js": Code2,
+  "Tailwind CSS": Wind,
+  "Framer Motion": Clapperboard,
+  GSAP: Sparkles,
+  "Three.js": Box,
+  "Lucide React": MousePointerClick,
+  TypeScript: FileCode2,
+};
+
+type Filter = "all" | TechItem["category"];
+
+const filters: { key: Filter; label: string }[] = [
+  { key: "all", label: "All" },
+  { key: "frontend", label: "Frontend" },
+  { key: "animation", label: "Animation & 3D" },
+  { key: "tools", label: "Icons & Type Safety" },
+];
+
+export default function TechStack() {
+  const [filter, setFilter] = useState<Filter>("all");
+  const visible = techStack.filter((item) => filter === "all" || item.category === filter);
+
+  return (
+    <section className="mx-auto max-w-7xl px-5 py-12 lg:px-8 lg:py-14">
+      <Reveal>
+        <SectionTag>Skills &amp; Technology</SectionTag>
+        <h2 className="mt-4 text-4xl font-bold leading-[1.08] tracking-tight sm:text-[44px]">
+          Built With <span className="text-[#C6FF00]">Next.js + Tailwind CSS</span>
+        </h2>
+        <p className="mt-3 max-w-xl text-[15px] text-[#11150D]/65 dark:text-[#A5AAA0]">
+          This portfolio itself is written in exactly this stack — every technology
+          below is used in its code.
+        </p>
+      </Reveal>
+
+      <div className="mt-8 flex flex-wrap gap-3">
+        {filters.map((f) => (
+          <button
+            key={f.key}
+            type="button"
+            onClick={() => setFilter(f.key)}
+            className={`rounded-full px-5 py-2 text-sm font-semibold transition ${
+              filter === f.key
+                ? "bg-[#C6FF00] text-[#080A07]"
+                : "border border-black/15 hover:border-[#C6FF00] dark:border-white/15"
+            }`}
+          >
+            {f.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {visible.map((tech, i) => {
+          const Icon = techIcons[tech.name] ?? Code2;
+          return (
+            <Reveal key={tech.name} delay={i * 0.05}>
+              <div className="card-surface flex h-full items-center gap-4 p-5">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[10px] border border-[#C6FF00]/25 bg-[#0d100b] text-[#C6FF00]">
+                  <Icon size={20} />
+                </span>
+                <div>
+                  <h3 className="font-heading text-[19px] font-bold leading-tight">
+                    {tech.name}
+                  </h3>
+                  <p className="mt-0.5 text-[13px] text-[#11150D]/60 dark:text-[#A5AAA0]">
+                    {tech.label} · {tech.categoryLabel}
+                  </p>
+                </div>
+              </div>
+            </Reveal>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
