@@ -1,4 +1,3 @@
-import Image from "next/image";
 import {
   ArrowRight,
   Code2,
@@ -7,6 +6,7 @@ import {
   Users,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import PortraitVisual from "./PortraitVisual";
 import Reveal from "./Reveal";
 import SectionTag from "./SectionTag";
 
@@ -24,114 +24,12 @@ const features: Feature[] = [
   { title: "Always Learning", text: "Modern Tools & Practices", Icon: GraduationCap },
 ];
 
-/**
- * Ahsan's own portrait (transparent cutout he supplied), composed like
- * his banner: solid neon shapes behind, glowing orbit lines over the
- * photo, a gentle float/sway animation, and the bottom of the photo
- * fading into the page background instead of ending in a hard edge.
- */
-function PortraitPanel() {
-  return (
-    <div className="relative mx-auto h-[420px] w-full max-w-[350px] sm:h-[470px]">
-      {/* solid neon geometric shapes behind the portrait */}
-      <svg viewBox="0 0 340 440" className="absolute inset-0 h-full w-full" aria-hidden="true">
-        <defs>
-          <linearGradient id="geoA" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#C6FF00" stopOpacity="0.95" />
-            <stop offset="100%" stopColor="#5c8400" stopOpacity="0.55" />
-          </linearGradient>
-          <linearGradient id="geoB" x1="0" y1="1" x2="1" y2="0">
-            <stop offset="0%" stopColor="#C6FF00" stopOpacity="0.35" />
-            <stop offset="100%" stopColor="#C6FF00" stopOpacity="0.85" />
-          </linearGradient>
-        </defs>
-        <polygon points="170,64 322,300 238,300" fill="url(#geoA)" opacity="0.9" />
-        <polygon points="18,300 96,120 196,300" fill="url(#geoB)" opacity="0.75" />
-        <polygon points="120,60 170,150 70,150" fill="#C6FF00" opacity="0.28" />
-        <polygon points="238,300 322,300 300,412 262,412" fill="#C6FF00" opacity="0.18" />
-        <polygon points="30,412 90,318 150,412" fill="#C6FF00" opacity="0.14" />
-      </svg>
-      {/* green glow pools behind and below the figure */}
-      <div className="absolute left-1/2 top-[46%] h-56 w-56 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#C6FF00]/25 blur-[60px]" />
-      <div className="absolute bottom-2 left-1/2 h-24 w-72 -translate-x-1/2 rounded-full bg-[#C6FF00]/20 blur-[45px]" />
-
-      {/* floating group: portrait + orbit lines over it */}
-      <div className="float-y absolute inset-0">
-        <Image
-          src="/images/ahsan-portrait.png"
-          alt="Ahsan — freelance web developer"
-          fill
-          sizes="(max-width: 640px) 320px, 350px"
-          className="object-contain drop-shadow-[0_24px_35px_rgba(0,0,0,0.55)] [mask-image:linear-gradient(to_bottom,black_80%,transparent_97%)] [-webkit-mask-image:linear-gradient(to_bottom,black_80%,transparent_97%)]"
-        />
-
-        {/* glowing orbit lines over the portrait, banner style */}
-        <svg viewBox="0 0 340 440" className="absolute inset-0 h-full w-full" aria-hidden="true">
-          <defs>
-            <filter id="ringGlow" x="-40%" y="-40%" width="180%" height="180%">
-              <feGaussianBlur stdDeviation="3.2" result="b" />
-              <feMerge>
-                <feMergeNode in="b" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-          </defs>
-          <g className="ring-sway-a" filter="url(#ringGlow)">
-            <ellipse
-              cx="170"
-              cy="272"
-              rx="169"
-              ry="57"
-              fill="none"
-              stroke="#C6FF00"
-              strokeWidth="2.4"
-              opacity="0.9"
-              transform="rotate(-16 170 272)"
-            />
-            <circle cx="30" cy="306" r="4.5" fill="#C6FF00" />
-          </g>
-          <g className="ring-sway-b" filter="url(#ringGlow)">
-            <ellipse
-              cx="170"
-              cy="254"
-              rx="152"
-              ry="45"
-              fill="none"
-              stroke="#C6FF00"
-              strokeWidth="1.8"
-              opacity="0.6"
-              transform="rotate(13 170 254)"
-            />
-            <ellipse
-              cx="170"
-              cy="254"
-              rx="152"
-              ry="45"
-              fill="none"
-              stroke="#C6FF00"
-              strokeWidth="3"
-              strokeDasharray="2 16"
-              opacity="0.85"
-              transform="rotate(13 170 254)"
-              className="dash-drift"
-            />
-            <circle cx="298" cy="212" r="3.5" fill="#C6FF00" opacity="0.9" />
-          </g>
-        </svg>
-      </div>
-
-      {/* extra blend so the photo's bottom melts into the page background */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-[#F7F9F4]/70 to-transparent dark:from-[#080A07]/70" />
-    </div>
-  );
-}
-
 export default function About() {
   return (
     <section id="about" className="relative overflow-hidden">
       <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-5 py-12 lg:grid-cols-[0.95fr_1.15fr_0.85fr] lg:gap-10 lg:px-8 lg:py-14">
         <Reveal>
-          <PortraitPanel />
+          <PortraitVisual />
         </Reveal>
 
         <Reveal delay={0.08}>

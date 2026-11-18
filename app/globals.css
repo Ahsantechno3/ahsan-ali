@@ -52,63 +52,6 @@ h4 {
   animation: glowPulse 4s ease-in-out infinite;
 }
 
-/* About portrait motion: gentle float, orbit-ring sway and dash drift. */
-@keyframes floatY {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-.float-y {
-  animation: floatY 6s ease-in-out infinite;
-}
-
-@keyframes ringSwayA {
-  0%,
-  100% {
-    transform: rotate(-2.5deg);
-  }
-  50% {
-    transform: rotate(2.5deg);
-  }
-}
-
-@keyframes ringSwayB {
-  0%,
-  100% {
-    transform: rotate(2deg);
-  }
-  50% {
-    transform: rotate(-2deg);
-  }
-}
-
-.ring-sway-a {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: ringSwayA 9s ease-in-out infinite;
-}
-
-.ring-sway-b {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: ringSwayB 11s ease-in-out infinite;
-}
-
-@keyframes dashDrift {
-  to {
-    stroke-dashoffset: -260;
-  }
-}
-
-.dash-drift {
-  animation: dashDrift 14s linear infinite;
-}
-
 .card-surface {
   border: 1px solid rgba(165, 170, 160, 0.18);
   border-radius: 14px;
