@@ -1,3 +1,4 @@
+import Image from "next/image";
 import {
   ArrowRight,
   Code2,
@@ -24,15 +25,16 @@ const features: Feature[] = [
 ];
 
 /**
- * Stylised developer figure over the reference's angular neon backdrop.
- * No photo of Ahsan was provided, so no stock photo of a real person
- * is used — this is an intentional graphic, not a portrait claim.
+ * Ahsan's own portrait (transparent cutout he supplied), composed like
+ * his banner: solid neon shapes behind, glowing orbit lines over the
+ * photo, a gentle float/sway animation, and the bottom of the photo
+ * fading into the page background instead of ending in a hard edge.
  */
 function PortraitPanel() {
   return (
-    <div className="relative mx-auto h-[400px] w-full max-w-[340px] sm:h-[440px]" aria-hidden="true">
-      {/* angular neon geometric backdrop */}
-      <svg viewBox="0 0 340 440" className="absolute inset-0 h-full w-full">
+    <div className="relative mx-auto h-[420px] w-full max-w-[350px] sm:h-[470px]">
+      {/* solid neon geometric shapes behind the portrait */}
+      <svg viewBox="0 0 340 440" className="absolute inset-0 h-full w-full" aria-hidden="true">
         <defs>
           <linearGradient id="geoA" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0%" stopColor="#C6FF00" stopOpacity="0.95" />
@@ -49,45 +51,77 @@ function PortraitPanel() {
         <polygon points="238,300 322,300 300,412 262,412" fill="#C6FF00" opacity="0.18" />
         <polygon points="30,412 90,318 150,412" fill="#C6FF00" opacity="0.14" />
       </svg>
+      {/* green glow pools behind and below the figure */}
       <div className="absolute left-1/2 top-[46%] h-56 w-56 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#C6FF00]/25 blur-[60px]" />
+      <div className="absolute bottom-2 left-1/2 h-24 w-72 -translate-x-1/2 rounded-full bg-[#C6FF00]/20 blur-[45px]" />
 
-      {/* developer silhouette */}
-      <svg
-        viewBox="0 0 200 260"
-        className="absolute bottom-4 left-1/2 w-[248px] -translate-x-1/2 drop-shadow-[0_24px_35px_rgba(0,0,0,0.6)]"
-      >
-        <circle cx="100" cy="66" r="34" fill="#10130d" stroke="#C6FF00" strokeOpacity="0.5" strokeWidth="1.6" />
-        <path
-          d="M100 104 C58 104 34 132 28 176 L26 236 C26 246 34 252 44 252 L156 252 C166 252 174 246 174 236 L172 176 C166 132 142 104 100 104 Z"
-          fill="#10130d"
-          stroke="#C6FF00"
-          strokeOpacity="0.5"
-          strokeWidth="1.6"
+      {/* floating group: portrait + orbit lines over it */}
+      <div className="float-y absolute inset-0">
+        <Image
+          src="/images/ahsan-portrait.png"
+          alt="Ahsan — freelance web developer"
+          fill
+          sizes="(max-width: 640px) 320px, 350px"
+          className="object-contain drop-shadow-[0_24px_35px_rgba(0,0,0,0.55)] [mask-image:linear-gradient(to_bottom,black_80%,transparent_97%)] [-webkit-mask-image:linear-gradient(to_bottom,black_80%,transparent_97%)]"
         />
-        {/* collar / shirt detail */}
-        <path d="M84 108 L100 132 L116 108 L108 104 L100 114 L92 104 Z" fill="#C6FF00" opacity="0.85" />
-        {/* glasses */}
-        <g stroke="#C6FF00" strokeWidth="2.4" fill="none" opacity="0.9">
-          <rect x="72" y="58" width="24" height="15" rx="4" />
-          <rect x="104" y="58" width="24" height="15" rx="4" />
-          <line x1="96" y1="63" x2="104" y2="63" />
-        </g>
-        {/* code glyph on chest */}
-        <text
-          x="100"
-          y="196"
-          textAnchor="middle"
-          fontFamily="monospace"
-          fontWeight="bold"
-          fontSize="30"
-          fill="#C6FF00"
-        >
-          {"</>"}
-        </text>
-      </svg>
 
-      {/* fade into page background at the bottom */}
-      <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#F7F9F4] to-transparent dark:from-[#080A07]" />
+        {/* glowing orbit lines over the portrait, banner style */}
+        <svg viewBox="0 0 340 440" className="absolute inset-0 h-full w-full" aria-hidden="true">
+          <defs>
+            <filter id="ringGlow" x="-40%" y="-40%" width="180%" height="180%">
+              <feGaussianBlur stdDeviation="3.2" result="b" />
+              <feMerge>
+                <feMergeNode in="b" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+          <g className="ring-sway-a" filter="url(#ringGlow)">
+            <ellipse
+              cx="170"
+              cy="272"
+              rx="169"
+              ry="57"
+              fill="none"
+              stroke="#C6FF00"
+              strokeWidth="2.4"
+              opacity="0.9"
+              transform="rotate(-16 170 272)"
+            />
+            <circle cx="30" cy="306" r="4.5" fill="#C6FF00" />
+          </g>
+          <g className="ring-sway-b" filter="url(#ringGlow)">
+            <ellipse
+              cx="170"
+              cy="254"
+              rx="152"
+              ry="45"
+              fill="none"
+              stroke="#C6FF00"
+              strokeWidth="1.8"
+              opacity="0.6"
+              transform="rotate(13 170 254)"
+            />
+            <ellipse
+              cx="170"
+              cy="254"
+              rx="152"
+              ry="45"
+              fill="none"
+              stroke="#C6FF00"
+              strokeWidth="3"
+              strokeDasharray="2 16"
+              opacity="0.85"
+              transform="rotate(13 170 254)"
+              className="dash-drift"
+            />
+            <circle cx="298" cy="212" r="3.5" fill="#C6FF00" opacity="0.9" />
+          </g>
+        </svg>
+      </div>
+
+      {/* extra blend so the photo's bottom melts into the page background */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-[#F7F9F4]/70 to-transparent dark:from-[#080A07]/70" />
     </div>
   );
 }
@@ -119,9 +153,12 @@ export default function About() {
         </Reveal>
 
         <Reveal delay={0.16}>
-          <ul className="divide-y divide-black/[0.06] dark:divide-white/[0.06]">
+          <ul className="space-y-3">
             {features.map((f) => (
-              <li key={f.title} className="flex items-center gap-4 py-[18px]">
+              <li
+                key={f.title}
+                className="flex items-center gap-4 rounded-2xl border border-black/[0.07] bg-white/70 px-4 py-3.5 dark:border-white/[0.08] dark:bg-white/[0.03]"
+              >
                 <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[10px] border border-[#C6FF00]/35 bg-[#C6FF00]/[0.06] text-[#7fb800] dark:text-[#C6FF00]">
                   <f.Icon size={21} />
                 </span>
