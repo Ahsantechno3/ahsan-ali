@@ -47,10 +47,14 @@ export default function PortraitVisual() {
         <polygon points="122,20 172,104 72,104" fill="#C6FF00" opacity="0.22" />
       </svg>
 
-      {/* Three.js scene — neeche se sirf halka fade, koi shadow/band nahi */}
-      <div className="absolute inset-0 [mask-image:linear-gradient(to_bottom,black_82%,transparent_98%)] [-webkit-mask-image:linear-gradient(to_bottom,black_82%,transparent_98%)]">
+      {/* Three.js scene */}
+      <div className="absolute inset-0">
         <PortraitScene />
       </div>
+
+      {/* bottom shadow — neeche (0 par) bilkul solid, upar jaty hue
+          ahista ahista khatam ho jata hai */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[38%] bg-gradient-to-t from-[#F7F9F4] via-[#F7F9F4]/35 to-transparent dark:from-[#080A07] dark:via-[#080A07]/35" />
     </div>
   );
 }

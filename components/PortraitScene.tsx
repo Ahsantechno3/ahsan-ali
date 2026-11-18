@@ -3,6 +3,20 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
+interface RingCfg {
+  radius: number;
+  tube: number;
+  color: number;
+  tiltX: number;
+  tiltZ: number;
+  y: number;
+  z: number;
+  opacity: number;
+  glowOpacity: number;
+  /** Z transition: line ahista aagay/peeche drift hoti hai taake real lage. */
+  zAnim?: { amp: number; speed: number };
+}
+
 // ============================================================================
 // ⚙️ CONFIGURATION — portrait aur rings ka har control yahin se hai
 // ============================================================================
@@ -13,14 +27,24 @@ const CONFIG = {
     height: 6.4, // plane height
   },
   rings: [
-    // radius: ring ka size · tube: line ki motai · tiltX/tiltZ: ring ka angle
-    // y: line ki height · z: photo se faasla — har line ya to POORI aagay
-    // hai ya POORI peechay (z ka faasla tilt ki z-range se zyada rakha
-    // hai, is liye koi line aadhi aagay / aadhi peechay nahi hoti)
-    // glowOpacity: line ke gird glow ki taqat
-    { radius: 1.95, tube: 0.022, color: 0xc6ff00, tiltX: 0.9, tiltZ: -0.3, y: -0.55, z: 1.75, glowOpacity: 0.1 }, // front line
-    { radius: 2.05, tube: 0.018, color: 0xc6ff00, tiltX: 0.55, tiltZ: 0.18, y: -0.1, z: -1.15, glowOpacity: 0.08 }, // back line
-  ],
+    // FRONT line — banner wali diagonal swoosh: line waist ki height par
+    // photo ko kaat-ti hui guzarti hai, is liye is ka chamakta hissa
+    // body ke AAGAY se aur dosra hissa PEECHAY se guzarta hai — bilkul
+    // sample banner ki tarah
+    {
+      radius: 2.05, tube: 0.024, color: 0xc6ff00,
+      tiltX: 1.15, tiltZ: -0.55, y: -0.85, z: 0.35,
+      opacity: 1, glowOpacity: 0.14,
+    },
+    // BACK line — poori ki poori photo ke peechay, halki si, aur Z mein
+    // ahista transition (drift) taake flat na lage, real lage
+    {
+      radius: 2.3, tube: 0.018, color: 0xc6ff00,
+      tiltX: 0.5, tiltZ: 0.25, y: 0.35, z: -1.675,
+      opacity: 0.8, glowOpacity: 0.06,
+      zAnim: { amp: 0.225, speed: 0.35 },
+    },
+  ] as RingCfg[],
   camera: { fov: 35, z: 11 },
 };
 
@@ -67,10 +91,12 @@ export default function PortraitScene() {
     const ringGroup = new THREE.Group();
     scene.add(ringGroup);
 
+    const ringItems: { pivot: THREE.Group; ring: RingCfg }[] = [];
     for (const r of CONFIG.rings) {
       const pivot = new THREE.Group();
       pivot.rotation.set(r.tiltX, 0, r.tiltZ);
       pivot.position.set(0, r.y, r.z);
+      ringItems.push({ pivot, ring: r });
       // glow/shadow layer — same ring, fatter and soft
       const glow = new THREE.Mesh(
         new THREE.TorusGeometry(r.radius, r.tube * 2.4, 16, 140),
@@ -85,17 +111,30 @@ export default function PortraitScene() {
       // the line itself
       const core = new THREE.Mesh(
         new THREE.TorusGeometry(r.radius, r.tube, 16, 140),
-        new THREE.MeshBasicMaterial({ color: r.color })
+        new THREE.MeshBasicMaterial({
+          color: r.color,
+          transparent: r.opacity < 1,
+          opacity: r.opacity,
+        })
       );
       pivot.add(glow, core);
       ringGroup.add(pivot);
     }
 
     let raf = 0;
+    const clock = new THREE.Clock();
     const animate = () => {
       raf = requestAnimationFrame(animate);
-      // lines apni jagah par still hain (sample banner ki tarah) —
-      // ek photo ke aagay, ek peechay. Photo par bhi koi animation nahi.
+      const t = clock.getElapsedTime();
+      // Back line ki Z transition: wo ahista depth mein drift hoti hai
+      // (kabhi thori qareeb, kabhi thori door) — is se wo flat nahi
+      // lagti, real 3D lagti hai. Front line aur photo still hain.
+      for (const item of ringItems) {
+        if (item.ring.zAnim) {
+          item.pivot.position.z =
+            item.ring.z + Math.sin(t * item.ring.zAnim.speed) * item.ring.zAnim.amp;
+        }
+      }
       renderer.render(scene, camera);
     };
 
