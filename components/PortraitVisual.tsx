@@ -7,9 +7,9 @@ const PortraitScene = dynamic(() => import("./PortraitScene"), { ssr: false });
 /**
  * About portrait composition, Ahsan ke banner jaisi:
  * peeche solid neon objects (bara triangle + patla circle), beech mein
- * Three.js scene (photo + asal 3D rings jo aagay/peeche se guzarti hain),
- * aur photo ka neeche wala hissa background mein fade hota hai.
- * Photo par koi animation nahi hai — sirf rings ahista ghoomti hain.
+ * Three.js scene (photo + do 3D lines: ek aagay, ek peeche), aur photo
+ * ka neeche wala hissa background mein fade hota hai — neeche koi
+ * shadow ya glow band nahi hai. Sab kuch still hai, koi animation nahi.
  */
 export default function PortraitVisual() {
   return (
@@ -47,17 +47,10 @@ export default function PortraitVisual() {
         <polygon points="122,20 172,104 72,104" fill="#C6FF00" opacity="0.22" />
       </svg>
 
-      {/* green glow pools */}
-      <div className="absolute left-1/2 top-[46%] h-56 w-56 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#C6FF00]/25 blur-[60px]" />
-      <div className="absolute bottom-2 left-1/2 h-24 w-72 -translate-x-1/2 rounded-full bg-[#C6FF00]/20 blur-[45px]" />
-
-      {/* Three.js scene — neeche se fade ke saath */}
+      {/* Three.js scene — neeche se sirf halka fade, koi shadow/band nahi */}
       <div className="absolute inset-0 [mask-image:linear-gradient(to_bottom,black_82%,transparent_98%)] [-webkit-mask-image:linear-gradient(to_bottom,black_82%,transparent_98%)]">
         <PortraitScene />
       </div>
-
-      {/* extra blend taake bottom bilkul background mein ghul jaye */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-[#F7F9F4]/70 to-transparent dark:from-[#080A07]/70" />
     </div>
   );
 }

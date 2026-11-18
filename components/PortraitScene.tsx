@@ -14,22 +14,23 @@ const CONFIG = {
   },
   rings: [
     // radius: ring ka size · tube: line ki motai · tiltX/tiltZ: ring ka angle
-    // glowOpacity: line ke gird glow/shadow ki taqat
-    { radius: 2.55, tube: 0.022, color: 0xc6ff00, tiltX: 1.22, tiltZ: -0.16, glowOpacity: 0.1 },
-    { radius: 2.3, tube: 0.018, color: 0xc6ff00, tiltX: 0.88, tiltZ: 0.24, glowOpacity: 0.08 },
+    // y: line ki height · z: photo se faasla — har line ya to POORI aagay
+    // hai ya POORI peechay (z ka faasla tilt ki z-range se zyada rakha
+    // hai, is liye koi line aadhi aagay / aadhi peechay nahi hoti)
+    // glowOpacity: line ke gird glow ki taqat
+    { radius: 1.95, tube: 0.022, color: 0xc6ff00, tiltX: 0.9, tiltZ: -0.3, y: -0.55, z: 1.75, glowOpacity: 0.1 }, // front line
+    { radius: 2.05, tube: 0.018, color: 0xc6ff00, tiltX: 0.55, tiltZ: 0.18, y: -0.1, z: -1.15, glowOpacity: 0.08 }, // back line
   ],
-  ringGroupY: -0.55, // rings waist ki height par
-  rotateSpeed: 0.25, // poora group kitni ahista ghoomta hai (rad/s)
   camera: { fov: 35, z: 11 },
 };
 
 /**
- * Ahsan ki photo ek Three.js plane par, aur asal 3D rings us ke gird —
- * har ring ka ek hissa photo ke AAGAY aur dosra hissa PEECHAY se guzarta
- * hai (alphaTest photo ke transparent hisse ko depth se kaat deta hai,
- * is liye peeche wali line khaali jagah par nazar aati hai aur body ke
- * peeche chhup jati hai). Lines par koi dots nahi hain; har line ke gird
- * ek soft glow layer hai jo use shadow/depth deta hai.
+ * Ahsan ki photo ek Three.js plane par, aur do asal 3D lines us ke gird,
+ * sample banner ki tarah: ek line poori ki poori photo ke AAGAY (z > 0)
+ * aur ek poori ki poori PEECHAY (z < 0 — alphaTest ki wajah se wo sirf
+ * photo ke khaali kinaron par nazar aati hai, body ke peeche chhup jati
+ * hai). Lines par koi dots nahi hain; har line ke gird ek soft glow
+ * layer hai. Lines aur photo dono still hain.
  */
 export default function PortraitScene() {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -64,12 +65,12 @@ export default function PortraitScene() {
 
     // --- orbit rings (solid lines, no dots) ---
     const ringGroup = new THREE.Group();
-    ringGroup.position.y = CONFIG.ringGroupY;
     scene.add(ringGroup);
 
     for (const r of CONFIG.rings) {
       const pivot = new THREE.Group();
       pivot.rotation.set(r.tiltX, 0, r.tiltZ);
+      pivot.position.set(0, r.y, r.z);
       // glow/shadow layer — same ring, fatter and soft
       const glow = new THREE.Mesh(
         new THREE.TorusGeometry(r.radius, r.tube * 2.4, 16, 140),
@@ -91,12 +92,10 @@ export default function PortraitScene() {
     }
 
     let raf = 0;
-    const clock = new THREE.Clock();
     const animate = () => {
       raf = requestAnimationFrame(animate);
-      const t = clock.getElapsedTime();
-      // sirf rings ghoomti hain — photo bilkul still hai
-      ringGroup.rotation.y = t * CONFIG.rotateSpeed;
+      // lines apni jagah par still hain (sample banner ki tarah) —
+      // ek photo ke aagay, ek peechay. Photo par bhi koi animation nahi.
       renderer.render(scene, camera);
     };
 
