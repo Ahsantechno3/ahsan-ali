@@ -91,6 +91,24 @@ export const processSteps: ProcessStep[] = [
   { title: "Launch", description: "Go live and grow together" },
 ];
 
+export interface Testimonial {
+  quote: string;
+  name: string;
+  role: string;
+  initials: string;
+}
+
+/** Testimonials exactly as shown in Ahsan's reference design. */
+export const testimonials: Testimonial[] = [
+  {
+    quote:
+      "Working with this developer was an amazing experience! The website is fast, beautiful, and exactly what we needed.",
+    name: "Sarah Johnson",
+    role: "Business Owner",
+    initials: "SJ",
+  },
+];
+
 export const projectTypes: string[] = [
   "Business Website",
   "E-Commerce Store",
