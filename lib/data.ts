@@ -92,7 +92,8 @@ export const processSteps: ProcessStep[] = [
 ];
 
 export interface Testimonial {
-  quote: string;
+  /** Quote split into the exact lines shown in Ahsan's reference design. */
+  quoteLines: string[];
   name: string;
   role: string;
   initials: string;
@@ -101,8 +102,10 @@ export interface Testimonial {
 /** Testimonials exactly as shown in Ahsan's reference design. */
 export const testimonials: Testimonial[] = [
   {
-    quote:
-      "Working with this developer was an amazing experience! The website is fast, beautiful, and exactly what we needed.",
+    quoteLines: [
+      "Working with this developer was an amazing experience!",
+      "The website is fast, beautiful, and exactly what we needed.",
+    ],
     name: "Sarah Johnson",
     role: "Business Owner",
     initials: "SJ",

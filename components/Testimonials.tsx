@@ -14,7 +14,7 @@ export default function Testimonials() {
   return (
     <section id="testimonials" className="relative overflow-hidden">
       <div className="pointer-events-none absolute right-10 top-16 h-64 w-64 rounded-full bg-[#C6FF00]/6 blur-[110px]" />
-      <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-5 py-12 lg:grid-cols-[320px_1fr] lg:gap-14 lg:px-8 lg:py-14">
+      <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-5 py-12 lg:grid-cols-[300px_1fr] lg:gap-14 lg:px-8 lg:py-14">
         <Reveal>
           <SectionTag>Client Testimonials</SectionTag>
           <h2 className="mt-4 text-4xl font-bold leading-[1.08] tracking-tight sm:text-[44px]">
@@ -32,25 +32,29 @@ export default function Testimonials() {
         </Reveal>
 
         <Reveal delay={0.1}>
-          <div className="relative lg:ml-auto lg:w-[86%]">
+          <div className="relative lg:ml-auto lg:w-[97%]">
             {/* main testimonial card */}
-            <div className="relative z-10 overflow-hidden rounded-[26px] border border-[#A5AAA0]/20 bg-white p-7 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.45)] dark:bg-[#121610] sm:p-9">
+            <div className="relative z-10 overflow-hidden rounded-[26px] border border-[#A5AAA0]/20 bg-white px-7 py-6 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.45)] dark:bg-[#121610] sm:px-10 sm:py-7">
               {/* soft green glow along the bottom, like the reference */}
               <div className="pointer-events-none absolute -bottom-28 left-16 h-52 w-[420px] rounded-full bg-[#C6FF00]/12 blur-[80px]" />
               <div className="relative">
                 <Quote
-                  size={40}
+                  size={36}
                   className="text-[#C6FF00] drop-shadow-[0_0_14px_rgba(198,255,0,0.5)]"
                   fill="#C6FF00"
                   strokeWidth={0}
                 />
-                <p className="mt-4 text-[19px] font-medium leading-[1.65] sm:text-[20px]">
-                  {t.quote}
+                <p className="mt-3 text-[19px] font-medium leading-[1.6] sm:text-[20px]">
+                  {t.quoteLines.map((line) => (
+                    <span key={line} className="block">
+                      {line}
+                    </span>
+                  ))}
                 </p>
 
-                <div className="mt-7 flex items-end justify-between gap-4">
+                <div className="mt-5 flex items-end justify-between gap-4">
                   <div className="flex items-center gap-3.5">
-                    <span className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-lime-200 to-emerald-500 text-[15px] font-bold text-black/70 ring-2 ring-[#C6FF00]/30">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-lime-200 to-emerald-500 text-[14px] font-bold text-black/70 ring-2 ring-[#C6FF00]/30">
                       {t.initials}
                     </span>
                     <div>
