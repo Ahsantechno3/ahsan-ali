@@ -13,55 +13,6 @@ const fadeUp = {
   animate: { opacity: 1, y: 0 },
 };
 
-/* ── Floating brand badges, reference style ─────────────────────── */
-
-function ReactBadge() {
-  return (
-    <svg width="34" height="34" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-      <circle cx="20" cy="20" r="2.6" fill="#61DAFB" />
-      <ellipse cx="20" cy="20" rx="15" ry="6" stroke="#61DAFB" strokeWidth="1.7" />
-      <ellipse
-        cx="20"
-        cy="20"
-        rx="15"
-        ry="6"
-        stroke="#61DAFB"
-        strokeWidth="1.7"
-        transform="rotate(60 20 20)"
-      />
-      <ellipse
-        cx="20"
-        cy="20"
-        rx="15"
-        ry="6"
-        stroke="#61DAFB"
-        strokeWidth="1.7"
-        transform="rotate(120 20 20)"
-      />
-    </svg>
-  );
-}
-
-function FigmaBadge() {
-  return (
-    <svg width="20" height="28" viewBox="0 0 24 34" fill="none" aria-hidden="true">
-      <path d="M8 0h6v8H8a4 4 0 1 1 0-8Z" fill="#F24E1E" />
-      <path d="M14 0h2a4 4 0 0 1 0 8h-2V0Z" fill="#FF7262" />
-      <path d="M8 8h6v8H8a4 4 0 1 1 0-8Z" fill="#A259FF" />
-      <circle cx="18" cy="12" r="4" fill="#1ABCFE" />
-      <path d="M8 16h6v4a5 5 0 0 1-6 4.9V16Z" fill="#0ACF83" />
-    </svg>
-  );
-}
-
-const badgeFloat = (duration: number, delay: number) => ({
-  animate: { y: [0, -11, 0] },
-  transition: { duration, delay, repeat: Infinity, ease: "easeInOut" as const },
-});
-
-const badgeBase =
-  "pointer-events-none absolute z-20 flex items-center justify-center rounded-full border shadow-[0_20px_45px_rgba(0,0,0,0.55)]";
-
 export default function Hero() {
   return (
     <section id="home" className="relative overflow-hidden">
@@ -163,38 +114,6 @@ export default function Hero() {
             <LaptopOrbitScene />
           </div>
 
-          {/* circular floating badges */}
-          <motion.span
-            {...badgeFloat(5, 0)}
-            className={`${badgeBase} left-[7%] top-[1%] h-16 w-16 border-white/10 bg-[#0d1522] sm:h-[72px] sm:w-[72px]`}
-          >
-            <ReactBadge />
-          </motion.span>
-          <motion.span
-            {...badgeFloat(6, 0.8)}
-            className={`${badgeBase} -left-2 top-[36%] h-[74px] w-[74px] border-white/25 bg-black sm:h-20 sm:w-20`}
-          >
-            <span className="text-center leading-none text-white">
-              <span className="block font-heading text-[26px] font-bold">N</span>
-              <span className="mt-0.5 block text-[8px] font-medium text-white/80">
-                Next.js
-              </span>
-            </span>
-          </motion.span>
-          <motion.span
-            {...badgeFloat(5.4, 0.4)}
-            className="pointer-events-none absolute right-[3%] top-[40%] z-20 flex h-12 w-12 items-end justify-end rounded-[12px] bg-[#F7DF1E] p-1.5 shadow-[0_20px_45px_rgba(0,0,0,0.5)] sm:h-14 sm:w-14"
-          >
-            <span className="font-heading text-base font-black leading-none text-black">
-              JS
-            </span>
-          </motion.span>
-          <motion.span
-            {...badgeFloat(6.4, 1.4)}
-            className={`${badgeBase} bottom-[3%] right-[9%] h-16 w-16 border-white/10 bg-[#121610] sm:h-[72px] sm:w-[72px]`}
-          >
-            <FigmaBadge />
-          </motion.span>
         </motion.div>
       </div>
     </section>
