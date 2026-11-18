@@ -11,28 +11,27 @@ import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 // ============================================================================
 const CONFIG = {
   orbits: [
-    { radius: 23, speed: 0.25, angle: 0, color: 0xc6ff00, thickness: 0.12, opacity: 0.55, tiltX: 1, tiltY: 0, tiltZ: 0 }, //green
-    { radius: 23, speed: -0.18, angle: 0, color: 0x38bdf8, thickness: 0.12, opacity: 0.55, tiltX: 0, tiltY: 1, tiltZ: 0 }, // blue
-    { radius: 23, speed: 0.12, angle: 0, color: 0xa855f7, thickness: 0.12, opacity: 0.55, tiltX: 0, tiltY: 0, tiltZ: 1 }, //purple
+    { radius: 23, speed: 0.25, angle: 0, color: 0xc6ff00, thickness: 0.05, opacity: 0.35, tiltX: 1, tiltY: 0, tiltZ: 0 }, //green
+    { radius: 23, speed: -0.18, angle: 0, color: 0x38bdf8, thickness: 0.05, opacity: 0.35, tiltX: 0, tiltY: 1, tiltZ: 0 }, // blue
+    { radius: 23, speed: 0.12, angle: 0, color: 0xa855f7, thickness: 0.05, opacity: 0.35, tiltX: 0, tiltY: 0, tiltZ: 1 }, //purple
   ],
 
   planets: [
-    { name: "Next.js", orbitIndex: 0, angleOffset: 0, color: 0xffffff, width: 5, height: 2.5, speedScale: 1 },
-    { name: "React", orbitIndex: 0, angleOffset: Math.PI, color: 0x61dafb, width: 5, height: 2.5, speedScale: 1 },
-    { name: "TypeScript", orbitIndex: 1, angleOffset: Math.PI / 2, color: 0x3178c6, width: 5, height: 2.5, speedScale: 1 },
-    { name: "Tailwind", orbitIndex: 1, angleOffset: (Math.PI * 3) / 2, color: 0x06b6d4, width: 5, height: 2.5, speedScale: 1 },
-    { name: "Three.js", orbitIndex: 2, angleOffset: Math.PI / 4, color: 0xffffff, width: 5, height: 2.5, speedScale: 1 },
-    { name: "Node.js", orbitIndex: 2, angleOffset: (Math.PI * 5) / 4, color: 0x5fa04e, width: 5, height: 2.5, speedScale: 1 },
+    { name: "Next.js", orbitIndex: 0, angleOffset: 0, color: 0xffffff, icon: "N", size: 4.4, speedScale: 1 },
+    { name: "React", orbitIndex: 0, angleOffset: Math.PI, color: 0x61dafb, icon: "atom", size: 4.4, speedScale: 1 },
+    { name: "TypeScript", orbitIndex: 1, angleOffset: Math.PI / 2, color: 0x3178c6, icon: "TS", size: 4.4, speedScale: 1 },
+    { name: "Tailwind", orbitIndex: 1, angleOffset: (Math.PI * 3) / 2, color: 0x06b6d4, icon: "wave", size: 4.4, speedScale: 1 },
+    { name: "Three.js", orbitIndex: 2, angleOffset: Math.PI / 4, color: 0xffffff, icon: "triangle", size: 4.4, speedScale: 1 },
+    { name: "Node.js", orbitIndex: 2, angleOffset: (Math.PI * 5) / 4, color: 0x5fa04e, icon: "hexagon", size: 4.4, speedScale: 1 },
   ],
 
-  planetLabel: {
-    canvasWidth: 256,
-    canvasHeight: 128,
-    fontSize: 32,
-    textColor: "#ffffff",
-    backgroundColor: "rgba(10, 10, 10, 0.85)",
-    borderWidth: 4,
-    cornerRadius: 20,
+  // Round icon badges (reference image style) — no text boxes
+  planetBadge: {
+    canvasSize: 256,
+    backgroundColor: "rgba(8, 12, 16, 0.88)",
+    borderWidth: 5,
+    glowBlur: 26,
+    fontSize: 62,
     bobAmount: 1.2,
     bobSpeed: 1,
   },
@@ -331,37 +330,95 @@ export default function LaptopOrbitScene() {
       const orbitData = CONFIG.orbits[planet.orbitIndex];
 
       const canvas = document.createElement("canvas");
-      canvas.width = CONFIG.planetLabel.canvasWidth;
-      canvas.height = CONFIG.planetLabel.canvasHeight;
+      canvas.width = CONFIG.planetBadge.canvasSize;
+      canvas.height = CONFIG.planetBadge.canvasSize;
       const ctx = canvas.getContext("2d");
       if (ctx) {
-        const w = CONFIG.planetLabel.canvasWidth;
-        const h = CONFIG.planetLabel.canvasHeight;
-        ctx.fillStyle = CONFIG.planetLabel.backgroundColor;
+        const s = CONFIG.planetBadge.canvasSize;
+        const c = s / 2;
+        const hex = `#${planet.color.toString(16).padStart(6, "0")}`;
+
+        // Round badge: dark disc, coloured glow + ring (reference style)
+        ctx.save();
+        ctx.shadowColor = hex;
+        ctx.shadowBlur = CONFIG.planetBadge.glowBlur;
+        ctx.fillStyle = CONFIG.planetBadge.backgroundColor;
         ctx.beginPath();
-        ctx.roundRect(
-          10,
-          10,
-          w - 20,
-          h - 20,
-          CONFIG.planetLabel.cornerRadius
-        );
+        ctx.arc(c, c, c - 16, 0, Math.PI * 2);
         ctx.fill();
-        ctx.lineWidth = CONFIG.planetLabel.borderWidth;
-        ctx.strokeStyle = `#${planet.color.toString(16).padStart(6, "0")}`;
+        ctx.restore();
+
+        ctx.lineWidth = CONFIG.planetBadge.borderWidth;
+        ctx.strokeStyle = hex;
+        ctx.beginPath();
+        ctx.arc(c, c, c - 16, 0, Math.PI * 2);
         ctx.stroke();
 
-        ctx.fillStyle = CONFIG.planetLabel.textColor;
-        ctx.font = `bold ${CONFIG.planetLabel.fontSize}px sans-serif`;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(planet.name, w / 2, h / 2);
+        // Tech icon inside the badge
+        ctx.strokeStyle = hex;
+        ctx.fillStyle = hex;
+        if (planet.icon === "atom") {
+          ctx.beginPath();
+          ctx.arc(c, c, 11, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.lineWidth = 7;
+          for (const rot of [0, Math.PI / 3, (Math.PI * 2) / 3]) {
+            ctx.save();
+            ctx.translate(c, c);
+            ctx.rotate(rot);
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 64, 25, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+          }
+        } else if (planet.icon === "wave") {
+          ctx.lineWidth = 13;
+          ctx.lineCap = "round";
+          for (const dy of [-24, 24]) {
+            ctx.beginPath();
+            ctx.moveTo(c - 58, c + dy);
+            ctx.bezierCurveTo(c - 30, c + dy - 30, c - 4, c + dy + 30, c + 24, c + dy);
+            ctx.bezierCurveTo(c + 38, c + dy - 12, c + 48, c + dy - 8, c + 58, c + dy);
+            ctx.stroke();
+          }
+        } else if (planet.icon === "triangle") {
+          ctx.lineWidth = 9;
+          ctx.lineJoin = "round";
+          ctx.beginPath();
+          ctx.moveTo(c, c - 54);
+          ctx.lineTo(c + 50, c + 38);
+          ctx.lineTo(c - 50, c + 38);
+          ctx.closePath();
+          ctx.stroke();
+        } else if (planet.icon === "hexagon") {
+          ctx.lineWidth = 8;
+          ctx.lineJoin = "round";
+          ctx.beginPath();
+          for (let i = 0; i < 6; i++) {
+            const a = (Math.PI / 3) * i - Math.PI / 2;
+            const x = c + Math.cos(a) * 56;
+            const y = c + Math.sin(a) * 56;
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.closePath();
+          ctx.stroke();
+          ctx.font = `bold 30px sans-serif`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText("node", c, c + 2);
+        } else {
+          ctx.font = `bold ${CONFIG.planetBadge.fontSize}px sans-serif`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(planet.icon, c, c + 2);
+        }
       }
 
       const planetTexture = new THREE.CanvasTexture(canvas);
       planetTexture.colorSpace = THREE.SRGBColorSpace;
 
-      const planetGeo = new THREE.PlaneGeometry(planet.width, planet.height);
+      const planetGeo = new THREE.PlaneGeometry(planet.size, planet.size);
       const planetMat = new THREE.MeshBasicMaterial({
         map: planetTexture,
         transparent: true,
@@ -548,8 +605,8 @@ export default function LaptopOrbitScene() {
         p.mesh.position.x = Math.cos(p.angle) * p.radius;
         p.mesh.position.z = Math.sin(p.angle) * p.radius;
         p.mesh.position.y =
-          Math.sin(elapsed * CONFIG.planetLabel.bobSpeed + p.angle) *
-          CONFIG.planetLabel.bobAmount;
+          Math.sin(elapsed * CONFIG.planetBadge.bobSpeed + p.angle) *
+          CONFIG.planetBadge.bobAmount;
 
         if (p.mesh.parent) {
           p.mesh.parent.getWorldQuaternion(parentWorldQuat);
