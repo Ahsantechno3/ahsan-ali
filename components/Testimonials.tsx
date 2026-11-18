@@ -32,23 +32,23 @@ export default function Testimonials() {
         </Reveal>
 
         <Reveal delay={0.1}>
-          <div className="relative">
+          <div className="relative lg:ml-auto lg:w-[86%]">
             {/* main testimonial card */}
-            <div className="relative z-10 overflow-hidden rounded-[26px] border border-[#A5AAA0]/20 bg-white p-8 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.45)] dark:bg-[#121610] sm:p-12">
+            <div className="relative z-10 overflow-hidden rounded-[26px] border border-[#A5AAA0]/20 bg-white p-7 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.45)] dark:bg-[#121610] sm:p-9">
               {/* soft green glow along the bottom, like the reference */}
               <div className="pointer-events-none absolute -bottom-28 left-16 h-52 w-[420px] rounded-full bg-[#C6FF00]/12 blur-[80px]" />
               <div className="relative">
                 <Quote
-                  size={46}
+                  size={40}
                   className="text-[#C6FF00] drop-shadow-[0_0_14px_rgba(198,255,0,0.5)]"
                   fill="#C6FF00"
                   strokeWidth={0}
                 />
-                <p className="mt-6 max-w-2xl text-[19px] font-medium leading-[1.55] sm:text-[21px]">
+                <p className="mt-4 text-[19px] font-medium leading-[1.65] sm:text-[20px]">
                   {t.quote}
                 </p>
 
-                <div className="mt-10 flex items-end justify-between gap-4">
+                <div className="mt-7 flex items-end justify-between gap-4">
                   <div className="flex items-center gap-3.5">
                     <span className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-lime-200 to-emerald-500 text-[15px] font-bold text-black/70 ring-2 ring-[#C6FF00]/30">
                       {t.initials}
