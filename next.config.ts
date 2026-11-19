@@ -18,11 +18,14 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob:",
       "font-src 'self' data:",
-      "connect-src 'self'",
+      // api.web3forms.com ko connect-src aur form-action mein ijazat
+      // lazmi hai — warna site ki apni CSP contact form ki requests
+      // khud rok deti hai (ye bug 2026-11-19 ko pakra gaya tha)
+      "connect-src 'self' https://api.web3forms.com",
       "worker-src 'self' blob:",
       "frame-ancestors 'self'",
       "base-uri 'self'",
-      "form-action 'self'",
+      "form-action 'self' https://api.web3forms.com",
     ].join("; "),
   },
 ];
