@@ -100,6 +100,48 @@ h4 {
   background: #c6ff00;
 }
 
+/* Scrollbar — theme color: light mein #89FF00, dark mein #C6FF00.
+   Track page background jaisa, thumb patla rounded neon. */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #89ff00 #f7f9f4;
+}
+
+html.dark {
+  scrollbar-color: #c6ff00 #080a07;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f7f9f4;
+}
+
+html.dark::-webkit-scrollbar-track {
+  background: #080a07;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #89ff00;
+  border-radius: 99px;
+  border: 2px solid #f7f9f4;
+}
+
+html.dark::-webkit-scrollbar-thumb {
+  background: #c6ff00;
+  border-color: #080a07;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #458000;
+}
+
+html.dark::-webkit-scrollbar-thumb:hover {
+  background: #d4ff3f;
+}
+
 /* About portrait bottom shadow — Ahsan ki marking ke mutabiq:
    neeche (0%) bilkul SOLID page color, upar jaty hue intensity
    seedhi line mein ZERO tak. Beech mein koi via/stop nahi hai. */
