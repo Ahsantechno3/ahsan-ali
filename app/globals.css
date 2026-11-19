@@ -52,6 +52,69 @@ h4 {
   animation: glowPulse 4s ease-in-out infinite;
 }
 
+/* CTA banner — border par ghoomti hui light (rotating beam).
+   Conic gradient ka sirf border wala hissa mask se dikhta hai;
+   --cta-angle @property se animate hota hai taake beam smooth ghume. */
+@property --cta-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes ctaSpin {
+  to {
+    --cta-angle: 360deg;
+  }
+}
+
+.cta-beam {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  background: conic-gradient(
+    from var(--cta-angle),
+    transparent 0deg,
+    rgba(137, 255, 0, 1) 45deg,
+    rgba(137, 255, 0, 0.3) 85deg,
+    transparent 130deg,
+    transparent 180deg,
+    rgba(137, 255, 0, 0.5) 220deg,
+    transparent 260deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: ctaSpin 7s linear infinite;
+  pointer-events: none;
+}
+
+.dark .cta-beam {
+  background: conic-gradient(
+    from var(--cta-angle),
+    transparent 0deg,
+    rgba(198, 255, 0, 1) 45deg,
+    rgba(198, 255, 0, 0.3) 85deg,
+    transparent 130deg,
+    transparent 180deg,
+    rgba(198, 255, 0, 0.5) 220deg,
+    transparent 260deg
+  );
+}
+
+/* Beam ki soft neon halo copy — light ko wazeh chamak deti hai */
+.cta-beam-glow {
+  filter: blur(7px);
+  opacity: 0.65;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta-beam {
+    animation: none;
+  }
+}
+
 .card-surface {
   border: 1px solid rgba(165, 170, 160, 0.18);
   border-radius: 14px;
