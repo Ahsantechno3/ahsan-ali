@@ -35,6 +35,7 @@ export default function ContactModal() {
   const [submitted, setSubmitted] = useState<Inquiry | null>(null);
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState("");
+  const [fallbackReady, setFallbackReady] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isDark, setIsDark] = useState(false);
   const [typeOpen, setTypeOpen] = useState(false);
@@ -110,6 +111,7 @@ export default function ContactModal() {
       setSubmitted(null);
       setErrors({});
       setSendError("");
+      setFallbackReady(false);
       typeOpenRef.current = false;
       setTypeOpen(false);
       setOpen(true);
@@ -203,7 +205,8 @@ export default function ContactModal() {
     // Asal submit — Web3Forms ke zariye inquiry Ahsan ke Gmail par jati hai
     setSending(true);
     setSendError("");
-    try {
+    setFallbackReady(false);
+    const attempt = async () => {
       const res = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
@@ -220,14 +223,57 @@ export default function ContactModal() {
       });
       const data = await res.json().catch(() => null);
       if (!res.ok || !data?.success) throw new Error("send failed");
+    };
+    try {
+      await attempt();
       setSubmitted(form);
     } catch {
-      setSendError(
-        `Your inquiry couldn't be sent just now. Please try again, or email me directly at ${contactEmail}.`
-      );
+      // Aarzi network ghalti ho sakti hai — ek dafa khud dobara koshish
+      await new Promise((r) => setTimeout(r, 1200));
+      try {
+        await attempt();
+        setSubmitted(form);
+      } catch {
+        // Ad-blocker waghera AJAX ko rok dein to backup form ka rasta
+        // error ke saath khul jata hai (neeche wala button)
+        setSendError(
+          `Your inquiry couldn't be sent just now. Please try again, or email me directly at ${contactEmail}.`
+        );
+        setFallbackReady(true);
+      }
     } finally {
       setSending(false);
     }
+  };
+
+  // Backup rasta: aam HTML form POST nayi tab mein — browser extensions
+  // jo AJAX requests rokti hain, isay aam tor par nahi rok patin.
+  // Web3Forms apna success page usi tab mein dikha deta hai.
+  const submitFallback = () => {
+    const f = document.createElement("form");
+    f.method = "POST";
+    f.action = "https://api.web3forms.com/submit";
+    f.target = "_blank";
+    const fields: Record<string, string> = {
+      access_key: web3formsAccessKey,
+      subject: `New Project Inquiry — ${form.projectType}`,
+      from_name: "Ahsan Ali Portfolio",
+      name: form.name,
+      email: form.email,
+      replyto: form.email,
+      message: `Project type: ${form.projectType}\n\n${form.message}`,
+      botcheck: "",
+    };
+    for (const [name, value] of Object.entries(fields)) {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = name;
+      input.value = value;
+      f.appendChild(input);
+    }
+    document.body.appendChild(f);
+    f.submit();
+    f.remove();
   };
 
   const download = () => {
@@ -454,7 +500,18 @@ export default function ContactModal() {
                 )}
               </div>
               {sendError && (
-                <p className="text-sm font-medium text-red-600 dark:text-red-400">{sendError}</p>
+                <div>
+                  <p className="text-sm font-medium text-red-600 dark:text-red-400">{sendError}</p>
+                  {fallbackReady && (
+                    <button
+                      type="button"
+                      onClick={submitFallback}
+                      className="mt-3 flex items-center gap-2 rounded-full border border-[#11150D]/20 px-5 py-2.5 text-sm font-semibold transition hover:border-[#89FF00] hover:text-[#458000] dark:border-white/20 dark:hover:border-[#C6FF00] dark:hover:text-[#C6FF00]"
+                    >
+                      Send via backup form <ArrowUpRight size={15} />
+                    </button>
+                  )}
+                </div>
               )}
               <button
                 type="submit"
