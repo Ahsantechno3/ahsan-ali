@@ -65,8 +65,18 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-black/5 bg-[#F7F9F4]/85 backdrop-blur dark:border-white/5 dark:bg-[#080A07]/85">
-      <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 lg:px-8">
+    <header className="sticky top-0 z-50 border-b border-black/[0.06] bg-white/45 shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_10px_36px_rgba(0,0,0,0.06)] backdrop-blur-xl backdrop-saturate-150 dark:border-white/[0.07] dark:bg-[#080A07]/50 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_10px_36px_rgba(0,0,0,0.35)]">
+      {/* glassy sheen — upar halki si roshni wali parat */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/50 via-white/10 to-transparent dark:from-white/[0.07] dark:via-white/[0.02] dark:to-transparent"
+      />
+      {/* neeche kinare par halki neon chamak */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[#89FF00]/25 to-transparent dark:via-[#C6FF00]/25"
+      />
+      <div className="relative mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 lg:px-8">
         <a
           href="#home"
           className="flex items-center gap-2 text-[#11150D] dark:text-[#F5F7F2]"
@@ -121,7 +131,7 @@ export default function Header() {
       </div>
 
       {open && (
-        <nav className="border-t border-black/5 px-5 py-4 dark:border-white/5 lg:hidden">
+        <nav className="relative border-t border-black/5 px-5 py-4 dark:border-white/5 lg:hidden">
           <div className="flex flex-col gap-1">
             {navLinks.map((link) => (
               <a
