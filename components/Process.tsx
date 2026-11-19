@@ -62,11 +62,15 @@ export default function Process() {
             const Icon = icons[i];
             return (
               <div key={step.title} className="process-step group relative text-center">
-                {/* connector: arrow ki jagah dotted line agle circle tak */}
+                {/* connector: arrow ki jagah dotted line agle circle tak.
+                    Dono taraf barabar 12px gap: left = is circle ke kinare
+                    se, right = agle circle ke kinare se naapa gaya hai —
+                    right wale hisaab mein grid ka lg:gap-6 (24px) bhi
+                    shamil hai, warna spacing ek taraf zyada ho jati thi */}
                 {i < processSteps.length - 1 && (
                   <div
                     aria-hidden="true"
-                    className="absolute left-[calc(50%+48px)] top-[35px] hidden h-[3px] w-[calc(100%-96px)] opacity-50 lg:block bg-[radial-gradient(circle,#C6FF00_1.6px,transparent_1.7px)] bg-[size:11px_3px] bg-repeat-x"
+                    className="absolute left-[calc(50%+48px)] right-[calc(-50%+24px)] top-[35px] hidden h-[3px] opacity-50 lg:block bg-[radial-gradient(circle,#C6FF00_1.6px,transparent_1.7px)] bg-[size:11px_3px] bg-repeat-x"
                   />
                 )}
                 <span className="process-icon mx-auto flex h-[72px] w-[72px] items-center justify-center rounded-full border border-[#C6FF00]/45 bg-[#C6FF00]/[0.07] text-[#7fb800] transition-all duration-300 group-hover:border-[#C6FF00]/90 group-hover:shadow-[0_0_34px_rgba(198,255,0,0.5)] dark:text-[#C6FF00]">
