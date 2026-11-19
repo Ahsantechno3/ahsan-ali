@@ -4,7 +4,6 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
-  ArrowRight,
   ClipboardList,
   Code2,
   MessagesSquare,
@@ -39,15 +38,8 @@ export default function Process() {
           },
         }
       );
-      // Subtle pulse on the step icons, driven by GSAP.
-      gsap.to(".process-icon", {
-        boxShadow: "0 0 32px rgba(198,255,0,0.55)",
-        duration: 1.4,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-        stagger: 0.2,
-      });
+      // Note: icons par koi blink/pulse animation nahi hai — glow
+      // sirf hover par ata hai (CSS group-hover se, neeche dekho).
     }, sectionRef);
     return () => ctx.revert();
   }, []);
@@ -69,16 +61,16 @@ export default function Process() {
           {processSteps.map((step, i) => {
             const Icon = icons[i];
             return (
-              <div key={step.title} className="process-step relative text-center">
-                {/* connector arrow to the next step */}
+              <div key={step.title} className="process-step group relative text-center">
+                {/* connector: arrow ki jagah dotted line agle circle tak */}
                 {i < processSteps.length - 1 && (
-                  <ArrowRight
-                    size={18}
-                    className="absolute -right-[13px] top-7 z-10 hidden -translate-y-1/2 text-[#C6FF00]/60 lg:block"
+                  <div
+                    aria-hidden="true"
+                    className="absolute left-[calc(50%+48px)] top-[35px] hidden h-[3px] w-[calc(100%-96px)] opacity-50 lg:block bg-[radial-gradient(circle,#C6FF00_1.6px,transparent_1.7px)] bg-[size:11px_3px] bg-repeat-x"
                   />
                 )}
-                <span className="process-icon mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-[#C6FF00]/45 bg-[#C6FF00]/[0.07] text-[#7fb800] dark:text-[#C6FF00]">
-                  <Icon size={22} />
+                <span className="process-icon mx-auto flex h-[72px] w-[72px] items-center justify-center rounded-full border border-[#C6FF00]/45 bg-[#C6FF00]/[0.07] text-[#7fb800] transition-all duration-300 group-hover:border-[#C6FF00]/90 group-hover:shadow-[0_0_34px_rgba(198,255,0,0.5)] dark:text-[#C6FF00]">
+                  <Icon size={26} />
                 </span>
                 <h3 className="mt-5 font-heading text-[16px] font-bold">
                   {String(i + 1).padStart(2, "0")}. {step.title}
