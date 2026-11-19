@@ -3,17 +3,13 @@
 import type { ComponentType } from "react";
 import { ArrowRight, ArrowUpRight, TrendingUp } from "lucide-react";
 import { projects } from "@/lib/data";
+import { openContactModal } from "./ContactModal";
 import Reveal from "./Reveal";
 import SectionTag from "./SectionTag";
 
 export function prefillProject(projectType: string) {
-  document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
-  // Contact listens for this event and selects the matching project type.
-  window.setTimeout(() => {
-    window.dispatchEvent(
-      new CustomEvent<string>("prefill-project", { detail: projectType })
-    );
-  }, 350);
+  // Card ke type ke saath wahi reusable contact modal khulta hai.
+  openContactModal(projectType);
 }
 
 /* ── Mock-screenshot visuals (pure JSX/SVG, no external images) ─── */

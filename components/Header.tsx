@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ArrowRight, Menu, Moon, Sun, X } from "lucide-react";
 import { navLinks } from "@/lib/data";
 import Logo from "./Logo";
+import { openContactModal } from "./ContactModal";
 
 export default function Header() {
   const [dark, setDark] = useState(true);
@@ -101,12 +102,13 @@ export default function Header() {
           >
             {dark ? <Sun size={18} /> : <Moon size={18} />}
           </button>
-          <a
-            href="#contact"
+          <button
+            type="button"
+            onClick={() => openContactModal()}
             className="hidden items-center gap-2 rounded-full bg-[#89FF00] dark:bg-[#C6FF00] px-5 py-2.5 text-sm font-semibold text-[#080A07] transition hover:shadow-[0_0_28px_rgba(137,255,0,0.5)] dark:hover:shadow-[0_0_28px_rgba(198,255,0,0.5)] sm:flex"
           >
             Let&apos;s Talk <ArrowRight size={16} />
-          </a>
+          </button>
           <button
             type="button"
             onClick={() => setOpen(!open)}

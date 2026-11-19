@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { ArrowRight, Play } from "lucide-react";
+import { openContactModal } from "./ContactModal";
 // Three.js must only run in the browser.
 const LaptopOrbitScene = dynamic(() => import("./LaptopOrbitScene"), {
   ssr: false,
@@ -54,12 +55,13 @@ export default function Hero() {
             transition={{ duration: 0.55, delay: 0.3 }}
             className="mt-8 flex flex-wrap items-center gap-4"
           >
-            <a
-              href="#contact"
+            <button
+              type="button"
+              onClick={() => openContactModal()}
               className="flex items-center gap-2 rounded-full bg-[#89FF00] dark:bg-[#C6FF00] px-6 py-3.5 text-sm font-bold text-[#080A07] transition hover:shadow-[0_0_36px_rgba(137,255,0,0.6)] dark:hover:shadow-[0_0_36px_rgba(198,255,0,0.6)]"
             >
               Let&apos;s Grow Your Business <ArrowRight size={16} />
-            </a>
+            </button>
             <a
               href="#projects"
               className="flex items-center gap-2.5 rounded-full border border-black/15 px-6 py-3.5 text-sm font-semibold transition hover:border-[#89FF00] dark:hover:border-[#C6FF00] dark:border-white/20"
