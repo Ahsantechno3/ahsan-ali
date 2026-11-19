@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
-import { ArrowUpRight, CheckCircle2, Copy, Download, X } from "lucide-react";
-import { projectTypes } from "@/lib/data";
+import { ArrowUpRight, CheckCircle2, Copy, Download, Mail, X } from "lucide-react";
+import { contactEmail, projectTypes } from "@/lib/data";
 
 interface Inquiry {
   name: string;
@@ -57,7 +57,9 @@ export default function ContactModal() {
   useEffect(() => {
     const handler = (event: Event) => {
       const detail = (event as CustomEvent<string>).detail;
-      if (detail && projectTypes.includes(detail)) {
+      // Project card se aye to usi project ka naam select ho jata hai —
+      // wo list mein na bhi ho to select mein extra option ban jata hai.
+      if (detail) {
         setForm((prev) => ({ ...prev, projectType: detail }));
       }
       setSubmitted(null);
@@ -182,17 +184,26 @@ export default function ContactModal() {
               Your inquiry is ready
             </h3>
             <p className="mt-2 text-[15px] leading-relaxed text-[#11150D]/60 dark:text-[#A5AAA0]">
-              Copy or download this summary and send it over — I&apos;ll get
-              back to you as soon as possible.
+              Send it straight to my inbox with the email button below, or
+              copy / download the summary — I&apos;ll get back to you as soon
+              as possible.
             </p>
             <pre className="mt-4 whitespace-pre-wrap rounded-[12px] bg-[#11150D]/[0.04] p-4 text-sm leading-relaxed dark:bg-white/[0.04]">
               {summary(submitted)}
             </pre>
             <div className="mt-6 flex flex-wrap gap-3">
+              <a
+                href={`mailto:${contactEmail}?subject=${encodeURIComponent(
+                  `Project Inquiry — ${submitted.projectType}`
+                )}&body=${encodeURIComponent(summary(submitted))}`}
+                className="flex items-center gap-2 rounded-full bg-[#89FF00] px-5 py-2.5 text-sm font-semibold text-[#080A07] dark:bg-[#C6FF00]"
+              >
+                <Mail size={15} /> Send via Email
+              </a>
               <button
                 type="button"
                 onClick={copy}
-                className="flex items-center gap-2 rounded-full bg-[#89FF00] px-5 py-2.5 text-sm font-semibold text-[#080A07] dark:bg-[#C6FF00]"
+                className="flex items-center gap-2 rounded-full border border-[#11150D]/15 px-5 py-2.5 text-sm font-semibold dark:border-white/15"
               >
                 <Copy size={15} /> {copied ? "Copied!" : "Copy inquiry"}
               </button>
@@ -272,6 +283,9 @@ export default function ContactModal() {
                   <option value="" disabled>
                     Select project type
                   </option>
+                  {form.projectType && !projectTypes.includes(form.projectType) && (
+                    <option>{form.projectType}</option>
+                  )}
                   {projectTypes.map((type) => (
                     <option key={type}>{type}</option>
                   ))}

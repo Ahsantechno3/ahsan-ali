@@ -1,6 +1,6 @@
 import {
-  ArrowRight,
   Code2,
+  Download,
   Gauge,
   GraduationCap,
   Users,
@@ -21,7 +21,7 @@ const features: Feature[] = [
   { title: "Clean Code", text: "Clean Code Approach", Icon: Code2 },
   { title: "Client-Focused", text: "Client-Focused Approach", Icon: Users },
   { title: "Performance First", text: "Fast On Every Device", Icon: Gauge },
-  { title: "Always Learning", text: "Modern Tools & Practices", Icon: GraduationCap },
+  { title: "Always Learning", text: "BS Software Engineering · KFUEIT", Icon: GraduationCap },
 ];
 
 export default function About() {
@@ -38,15 +38,19 @@ export default function About() {
             Turning Ideas Into <span className="text-[#89FF00] dark:text-[#C6FF00]">Powerful Websites.</span>
           </h2>
           <p className="mt-5 max-w-md text-[15px] leading-relaxed text-[#11150D]/70 dark:text-[#A5AAA0]">
-            I&apos;m a passionate web developer who loves building modern,
-            high-performance websites. My focus is on delivering clean code,
-            great design, and real results.
+            I&apos;m a MERN Stack Developer based in Rahim Yar Khan, Pakistan,
+            building full-stack web applications with MongoDB, Express.js,
+            React and Node.js — from REST APIs and authentication to
+            responsive, polished interfaces. I recently completed a MERN
+            development internship at Promotezz International, and I&apos;m
+            pursuing a BS in Software Engineering at KFUEIT.
           </p>
           <a
-            href="#contact"
+            href="/Ahsan-Ali-CV.pdf"
+            download
             className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#89FF00] dark:bg-[#C6FF00] px-6 py-3 text-sm font-bold text-[#080A07] transition hover:shadow-[0_0_32px_rgba(137,255,0,0.55)] dark:hover:shadow-[0_0_32px_rgba(198,255,0,0.55)]"
           >
-            Know More About Me <ArrowRight size={16} />
+            Know More About Me <Download size={16} />
           </a>
         </Reveal>
 

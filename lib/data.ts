@@ -40,27 +40,38 @@ export const standards: { title: string; description: string; icon: string }[] =
   { title: "Clear Communication", description: "Simple, transparent updates from first discussion to launch.", icon: "MessagesSquare" },
 ];
 
+/** Ahsan ka asal contact email (uske CV se) — inquiries isi par jati hain. */
+export const contactEmail = "malikahsandevi@gmail.com";
+
+/** Ahsan ke asal projects — uske CV se liye gaye, koi invented kaam nahi. */
 export const projects: Project[] = [
   {
-    title: "E-Commerce Store",
-    description: "A modern storefront with product browsing, cart and a streamlined checkout flow.",
-    benefit: "Built to turn visitors into customers",
-    tags: ["Next.js", "Tailwind CSS", "TypeScript"],
+    title: "E-Commerce Platform",
+    description: "Full-stack e-commerce platform with product management, authentication, cart, orders, reviews and an admin dashboard.",
+    benefit: "A complete store, from browsing to orders",
+    tags: ["MongoDB", "Express.js", "React.js", "Node.js"],
     gradient: "from-lime-400/30 via-emerald-500/10 to-transparent",
   },
   {
-    title: "Analytics Dashboard",
-    description: "A data dashboard with clear charts and insights a business can act on quickly.",
-    benefit: "Better insights, bigger growth",
-    tags: ["Next.js", "Framer Motion", "TypeScript"],
+    title: "Chrome Image Downloader",
+    description: "Chrome extension for scanning, filtering, converting and downloading images from web pages.",
+    benefit: "One-click image downloads from any page",
+    tags: ["JavaScript", "HTML/CSS", "Chrome Extension"],
     gradient: "from-cyan-400/25 via-lime-500/10 to-transparent",
   },
   {
-    title: "Real Estate Platform",
-    description: "A property platform with listings, search and enquiry flows for agents.",
-    benefit: "More leads, more clients",
-    tags: ["Next.js", "Tailwind CSS", "GSAP"],
+    title: "LeetCode User Finder",
+    description: "Web application for searching LeetCode users and displaying their coding statistics.",
+    benefit: "Instant profiles and coding stats",
+    tags: ["React.js", "REST API"],
     gradient: "from-amber-400/25 via-lime-500/10 to-transparent",
+  },
+  {
+    title: "Weather App",
+    description: "Responsive weather application with real-time weather data and API integration.",
+    benefit: "Live weather, beautifully simple",
+    tags: ["React.js", "REST API"],
+    gradient: "from-sky-400/25 via-lime-500/10 to-transparent",
   },
 ];
 

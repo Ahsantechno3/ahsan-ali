@@ -1,14 +1,15 @@
 import { ArrowUp, Github, Heart, Linkedin, Mail, Twitter, Youtube } from "lucide-react";
+import { contactEmail } from "@/lib/data";
 import Logo from "./Logo";
 
-// TODO: LinkedIn / X / YouTube abhi platform homepages hain — Ahsan apne
-// real profile URLs de to yahan lag jayenge. GitHub us ka asal profile hai.
+// LinkedIn aur Email Ahsan ke CV se asal hain. X / YouTube abhi platform
+// homepages hain — real profile URLs milen to yahan lag jayenge.
 const socials = [
   { label: "GitHub", href: "https://github.com/Ahsantechno3", Icon: Github },
-  { label: "LinkedIn", href: "https://www.linkedin.com", Icon: Linkedin },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/ahsan-ali-468453440", Icon: Linkedin },
   { label: "Twitter / X", href: "https://x.com", Icon: Twitter },
   { label: "YouTube", href: "https://www.youtube.com", Icon: Youtube },
-  { label: "Email", href: "#contact", Icon: Mail },
+  { label: "Email", href: `mailto:${contactEmail}`, Icon: Mail },
 ];
 
 export default function Footer() {
