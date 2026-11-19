@@ -4,10 +4,12 @@ import Logo from "./Logo";
 
 // GitHub aur LinkedIn Ahsan ke asal profiles hain. X aur YouTube us ke
 // kehne par hata diye gaye hain (un par us ke profiles nahi hain).
-// Email ab sirf icon nahi — pura address text mein nazar ata hai.
+// Email icon mailto hai — click karne par visitor ke mail app mein
+// Ahsan ka address To mein pehle se likha ata hai.
 const socials = [
   { label: "GitHub", href: "https://github.com/Ahsantechno3", Icon: Github },
   { label: "LinkedIn", href: "https://www.linkedin.com/in/ahsan-ali-468453440", Icon: Linkedin },
+  { label: "Email", href: `mailto:${contactEmail}`, Icon: Mail },
 ];
 
 export default function Footer() {
@@ -36,28 +38,20 @@ export default function Footer() {
             for a better web.
           </p>
 
-          <div className="flex flex-col items-center gap-3 justify-self-center md:items-end md:justify-self-end">
-            <a
-              href={`mailto:${contactEmail}`}
-              className="flex items-center gap-2 text-[13px] font-medium text-[#11150D]/70 transition hover:text-[#458000] dark:text-[#A5AAA0] dark:hover:text-[#C6FF00]"
-            >
-              <Mail size={14} /> {contactEmail}
-            </a>
-            <div className="flex gap-2.5">
-              {socials.map(({ label, href, Icon }) => (
-                <a
-                  key={label}
-                  href={href}
-                  {...(href.startsWith("http")
-                    ? { target: "_blank", rel: "noreferrer" }
-                    : {})}
-                  aria-label={label}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 transition hover:border-[#89FF00] dark:hover:border-[#C6FF00] hover:text-[#458000] dark:border-white/12 dark:hover:text-[#C6FF00]"
-                >
-                  <Icon size={16} />
-                </a>
-              ))}
-            </div>
+          <div className="flex gap-2.5 justify-self-center md:justify-self-end">
+            {socials.map(({ label, href, Icon }) => (
+              <a
+                key={label}
+                href={href}
+                {...(href.startsWith("http")
+                  ? { target: "_blank", rel: "noreferrer" }
+                  : {})}
+                aria-label={label}
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 transition hover:border-[#89FF00] dark:hover:border-[#C6FF00] hover:text-[#458000] dark:border-white/12 dark:hover:text-[#C6FF00]"
+              >
+                <Icon size={16} />
+              </a>
+            ))}
           </div>
         </div>
       </div>
