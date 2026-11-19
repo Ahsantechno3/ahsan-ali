@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
-import { ArrowUpRight, CheckCircle2, Copy, Download, Mail, X } from "lucide-react";
-import { contactEmail, projectTypes } from "@/lib/data";
+import { ArrowUpRight, CheckCircle2, Copy, Download, X } from "lucide-react";
+import { contactEmail, projectTypes, web3formsAccessKey } from "@/lib/data";
 
 interface Inquiry {
   name: string;
@@ -33,6 +33,8 @@ export default function ContactModal() {
   const [form, setForm] = useState<Inquiry>(empty);
   const [errors, setErrors] = useState<Partial<Record<keyof Inquiry, string>>>({});
   const [submitted, setSubmitted] = useState<Inquiry | null>(null);
+  const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState("");
   const [copied, setCopied] = useState(false);
   const [isDark, setIsDark] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -64,6 +66,7 @@ export default function ContactModal() {
       }
       setSubmitted(null);
       setErrors({});
+      setSendError("");
       setOpen(true);
     };
     window.addEventListener("open-contact-modal", handler);
@@ -114,7 +117,7 @@ export default function ContactModal() {
   const summary = (data: Inquiry) =>
     `Project Inquiry\n----------------\nName: ${data.name}\nEmail: ${data.email}\nProject type: ${data.projectType}\n\nMessage:\n${data.message}`;
 
-  const onSubmit = (event: FormEvent) => {
+  const onSubmit = async (event: FormEvent) => {
     event.preventDefault();
     const next: Partial<Record<keyof Inquiry, string>> = {};
     if (form.name.trim().length < 2) next.name = "Please enter your name.";
@@ -124,7 +127,36 @@ export default function ContactModal() {
     if (form.message.trim().length < 10)
       next.message = "Please add a little detail about your project (10+ characters).";
     setErrors(next);
-    if (Object.keys(next).length === 0) setSubmitted(form);
+    if (Object.keys(next).length > 0) return;
+
+    // Asal submit — Web3Forms ke zariye inquiry Ahsan ke Gmail par jati hai
+    setSending(true);
+    setSendError("");
+    try {
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          access_key: web3formsAccessKey,
+          subject: `New Project Inquiry — ${form.projectType}`,
+          from_name: "Ahsan Ali Portfolio",
+          name: form.name,
+          email: form.email,
+          replyto: form.email,
+          message: `Project type: ${form.projectType}\n\n${form.message}`,
+          botcheck: "",
+        }),
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data?.success) throw new Error("send failed");
+      setSubmitted(form);
+    } catch {
+      setSendError(
+        `Your inquiry couldn't be sent just now. Please try again, or email me directly at ${contactEmail}.`
+      );
+    } finally {
+      setSending(false);
+    }
   };
 
   const download = () => {
@@ -181,29 +213,21 @@ export default function ContactModal() {
               <CheckCircle2 size={22} />
             </span>
             <h3 className="mt-4 font-heading text-2xl font-semibold">
-              Your inquiry is ready
+              Your inquiry has been sent!
             </h3>
             <p className="mt-2 text-[15px] leading-relaxed text-[#11150D]/60 dark:text-[#A5AAA0]">
-              Send it straight to my inbox with the email button below, or
-              copy / download the summary — I&apos;ll get back to you as soon
-              as possible.
+              Thank you — your message is on its way to my inbox.
+              I&apos;ll get back to you as soon as possible. Here&apos;s a
+              copy of what you sent:
             </p>
             <pre className="mt-4 whitespace-pre-wrap rounded-[12px] bg-[#11150D]/[0.04] p-4 text-sm leading-relaxed dark:bg-white/[0.04]">
               {summary(submitted)}
             </pre>
             <div className="mt-6 flex flex-wrap gap-3">
-              <a
-                href={`mailto:${contactEmail}?subject=${encodeURIComponent(
-                  `Project Inquiry — ${submitted.projectType}`
-                )}&body=${encodeURIComponent(summary(submitted))}`}
-                className="flex items-center gap-2 rounded-full bg-[#89FF00] px-5 py-2.5 text-sm font-semibold text-[#080A07] dark:bg-[#C6FF00]"
-              >
-                <Mail size={15} /> Send via Email
-              </a>
               <button
                 type="button"
                 onClick={copy}
-                className="flex items-center gap-2 rounded-full border border-[#11150D]/15 px-5 py-2.5 text-sm font-semibold dark:border-white/15"
+                className="flex items-center gap-2 rounded-full bg-[#89FF00] px-5 py-2.5 text-sm font-semibold text-[#080A07] dark:bg-[#C6FF00]"
               >
                 <Copy size={15} /> {copied ? "Copied!" : "Copy inquiry"}
               </button>
@@ -310,11 +334,16 @@ export default function ContactModal() {
                   <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">{errors.message}</p>
                 )}
               </div>
+              {sendError && (
+                <p className="text-sm font-medium text-red-600 dark:text-red-400">{sendError}</p>
+              )}
               <button
                 type="submit"
-                className="flex w-full items-center justify-center gap-2 rounded-full bg-[#89FF00] py-4 text-[15px] font-bold text-[#080A07] transition hover:shadow-[0_0_36px_rgba(137,255,0,0.5)] dark:bg-[#C6FF00] dark:hover:shadow-[0_0_36px_rgba(198,255,0,0.5)]"
+                disabled={sending}
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-[#89FF00] py-4 text-[15px] font-bold text-[#080A07] transition hover:shadow-[0_0_36px_rgba(137,255,0,0.5)] disabled:cursor-wait disabled:opacity-70 dark:bg-[#C6FF00] dark:hover:shadow-[0_0_36px_rgba(198,255,0,0.5)]"
               >
-                Let&apos;s Talk About Your Project <ArrowUpRight size={17} />
+                {sending ? "Sending..." : "Let's Talk About Your Project"}{" "}
+                {!sending && <ArrowUpRight size={17} />}
               </button>
             </form>
           </>

@@ -43,6 +43,13 @@ export const standards: { title: string; description: string; icon: string }[] =
 /** Ahsan ka asal contact email (uske CV se) — inquiries isi par jati hain. */
 export const contactEmail = "malikahsandevi@gmail.com";
 
+/**
+ * Web3Forms access key — form submit hone par inquiry seedha Ahsan ke
+ * Gmail par jati hai. Ye key public hoti hai (site ke code mein lagti
+ * hai), password nahi hai.
+ */
+export const web3formsAccessKey = "9618b3bb-f0e0-4a20-91b4-b83dbb382491";
+
 /** Ahsan ke asal projects — uske CV se liye gaye, koi invented kaam nahi. */
 export const projects: Project[] = [
   {
