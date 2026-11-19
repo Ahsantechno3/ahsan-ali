@@ -256,7 +256,7 @@ export default function Projects() {
                     </div>
                     <button
                       type="button"
-                      onClick={() => prefillProject(project.title)}
+                      onClick={() => prefillProject(project.type)}
                       className="mt-5 inline-flex items-center gap-1.5 self-start pt-1 text-[13px] font-bold text-[#11150D] transition hover:text-[#458000] dark:text-[#F5F7F2] dark:hover:text-[#C6FF00]"
                     >
                       Build something like this

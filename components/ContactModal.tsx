@@ -60,12 +60,9 @@ export default function ContactModal() {
     return () => observer.disconnect();
   }, []);
 
-  // Project type ki list — card se preselect hua naam list mein na ho
-  // to wo bhi sab se upar shamil ho jata hai
-  const typeOptions =
-    form.projectType && !projectTypes.includes(form.projectType)
-      ? [form.projectType, ...projectTypes]
-      : projectTypes;
+  // Project type ki list hamesha wahi GENERAL types hoti hai —
+  // kisi specific project ka naam dropdown mein nahi ata
+  const typeOptions = projectTypes;
   const typeOptionsRef = useRef<string[]>(typeOptions);
   typeOptionsRef.current = typeOptions;
   const typeHighlightRef = useRef(0);
@@ -104,9 +101,10 @@ export default function ContactModal() {
   useEffect(() => {
     const handler = (event: Event) => {
       const detail = (event as CustomEvent<string>).detail;
-      // Project card se aye to usi project ka naam select ho jata hai —
-      // wo list mein na bhi ho to select mein extra option ban jata hai.
-      if (detail) {
+      // Project card se aye to us project ki GENERAL type select hoti
+      // hai (masalan E-Commerce Store) — project ka naam kabhi nahi.
+      // List se bahir ki value kabhi select nahi hoti.
+      if (detail && projectTypes.includes(detail)) {
         setForm((prev) => ({ ...prev, projectType: detail }));
       }
       setSubmitted(null);

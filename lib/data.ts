@@ -1,5 +1,8 @@
 export interface Project {
   title: string;
+  /** Form ke dropdown ke liye GENERAL type — specific project ka naam
+      nahi. Card ka button yahi type preselect karta hai. */
+  type: string;
   description: string;
   benefit: string;
   tags: string[];
@@ -54,6 +57,7 @@ export const web3formsAccessKey = "9618b3bb-f0e0-4a20-91b4-b83dbb382491";
 export const projects: Project[] = [
   {
     title: "E-Commerce Platform",
+    type: "E-Commerce Store",
     description: "Full-stack e-commerce platform with product management, authentication, cart, orders, reviews and an admin dashboard.",
     benefit: "A complete store, from browsing to orders",
     tags: ["MongoDB", "Express.js", "React.js", "Node.js"],
@@ -61,6 +65,7 @@ export const projects: Project[] = [
   },
   {
     title: "Chrome Image Downloader",
+    type: "Web Application",
     description: "Chrome extension for scanning, filtering, converting and downloading images from web pages.",
     benefit: "One-click image downloads from any page",
     tags: ["JavaScript", "HTML/CSS", "Chrome Extension"],
@@ -68,6 +73,7 @@ export const projects: Project[] = [
   },
   {
     title: "LeetCode User Finder",
+    type: "Web Application",
     description: "Web application for searching LeetCode users and displaying their coding statistics.",
     benefit: "Instant profiles and coding stats",
     tags: ["React.js", "REST API"],
@@ -75,6 +81,7 @@ export const projects: Project[] = [
   },
   {
     title: "Weather App",
+    type: "Web Application",
     description: "Responsive weather application with real-time weather data and API integration.",
     benefit: "Live weather, beautifully simple",
     tags: ["React.js", "REST API"],
@@ -130,11 +137,18 @@ export const testimonials: Testimonial[] = [
   },
 ];
 
+/**
+ * Form ke dropdown ki GENERAL project types — koi specific project ya
+ * niche nahi, aam categories jo har client samajhta hai.
+ */
 export const projectTypes: string[] = [
   "Business Website",
   "E-Commerce Store",
-  "Analytics Dashboard",
-  "Real Estate Platform",
+  "Portfolio Website",
+  "Landing Page",
   "Web Application",
+  "Dashboard / Admin Panel",
+  "Blog / News Website",
+  "Website Redesign",
   "Something Else",
 ];
