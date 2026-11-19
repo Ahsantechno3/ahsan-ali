@@ -1,7 +1,9 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
+import gsap from "gsap";
 import { ArrowRight, Play } from "lucide-react";
 import { openContactModal } from "./ContactModal";
 // Three.js must only run in the browser.
@@ -15,11 +17,71 @@ const fadeUp = {
 };
 
 export default function Hero() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const glow1Ref = useRef<HTMLDivElement>(null);
+  const glow2Ref = useRef<HTMLDivElement>(null);
+  const poolRef = useRef<HTMLDivElement>(null);
+
+  // GSAP — hero ki roshniyon mein jaan: halki si float harkat aur
+  // mouse ke saath parallax. (Pehli glow par CSS pulse thi, wo hata
+  // di hai taake GSAP se takraye nahi.)
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const ctx = gsap.context(() => {
+      gsap.set(poolRef.current, { xPercent: -50 });
+      gsap.to(poolRef.current, {
+        y: -12,
+        duration: 3.4,
+        yoyo: true,
+        repeat: -1,
+        ease: "sine.inOut",
+      });
+      gsap.to(glow2Ref.current, {
+        y: -14,
+        duration: 4.5,
+        yoyo: true,
+        repeat: -1,
+        ease: "sine.inOut",
+      });
+    }, section);
+
+    const x1 = gsap.quickTo(glow1Ref.current, "x", { duration: 0.7, ease: "power3" });
+    const y1 = gsap.quickTo(glow1Ref.current, "y", { duration: 0.7, ease: "power3" });
+    const x2 = gsap.quickTo(glow2Ref.current, "x", { duration: 0.9, ease: "power3" });
+    const xp = gsap.quickTo(poolRef.current, "x", { duration: 0.9, ease: "power3" });
+
+    const onMove = (e: MouseEvent) => {
+      const r = section.getBoundingClientRect();
+      const nx = (e.clientX - r.left) / r.width - 0.5;
+      const ny = (e.clientY - r.top) / r.height - 0.5;
+      x1(nx * 68);
+      y1(ny * 40);
+      x2(nx * -44);
+      xp(nx * 24);
+    };
+    const onLeave = () => {
+      x1(0);
+      y1(0);
+      x2(0);
+      xp(0);
+    };
+    section.addEventListener("mousemove", onMove);
+    section.addEventListener("mouseleave", onLeave);
+    return () => {
+      section.removeEventListener("mousemove", onMove);
+      section.removeEventListener("mouseleave", onLeave);
+      ctx.revert();
+    };
+  }, []);
+
   return (
-    <section id="home" className="relative overflow-hidden">
-      {/* soft radial glows */}
-      <div className="glow-pulse pointer-events-none absolute -right-40 top-0 h-[480px] w-[480px] rounded-full bg-[#89FF00]/15 dark:bg-[#C6FF00]/15 blur-[130px]" />
-      <div className="pointer-events-none absolute -left-40 top-64 h-72 w-72 rounded-full bg-[#89FF00]/8 dark:bg-[#C6FF00]/8 blur-[110px]" />
+    <section id="home" ref={sectionRef} className="relative overflow-hidden">
+      {/* soft radial glows — GSAP inhein float + parallax deta hai */}
+      <div ref={glow1Ref} className="pointer-events-none absolute -right-40 top-0 h-[480px] w-[480px] rounded-full bg-[#89FF00]/15 dark:bg-[#C6FF00]/15 blur-[130px]" />
+      <div ref={glow2Ref} className="pointer-events-none absolute -left-40 top-64 h-72 w-72 rounded-full bg-[#89FF00]/8 dark:bg-[#C6FF00]/8 blur-[110px]" />
 
       <div className="relative mx-auto grid max-w-7xl items-center gap-6 px-5 pb-16 pt-12 lg:grid-cols-[1fr_1.12fr] lg:px-8 lg:pt-16">
         <div>
@@ -108,8 +170,9 @@ export default function Hero() {
           transition={{ duration: 0.7, delay: 0.2 }}
           className="relative mx-auto h-[380px] w-full max-w-[580px] sm:h-[460px] lg:h-[540px]"
         >
-          {/* glow pool underneath */}
-          <div className="pointer-events-none absolute bottom-[4%] left-1/2 h-24 w-[78%] -translate-x-1/2 rounded-[100%] bg-[#89FF00]/30 dark:bg-[#C6FF00]/30 blur-[46px]" />
+          {/* glow pool underneath — GSAP isay float karta hai (centering
+              bhi GSAP ke xPercent se hoti hai) */}
+          <div ref={poolRef} className="pointer-events-none absolute bottom-[4%] left-1/2 h-24 w-[78%] rounded-[100%] bg-[#89FF00]/30 dark:bg-[#C6FF00]/30 blur-[46px]" />
 
           {/* 3D MacBook orbit scene */}
           <div className="absolute inset-0">
