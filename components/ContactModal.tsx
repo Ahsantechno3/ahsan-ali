@@ -26,7 +26,7 @@ export function openContactModal(projectType?: string) {
 }
 
 const inputClass =
-  "w-full rounded-[12px] border border-white/[0.12] bg-white/[0.03] px-4 py-[13px] text-[15px] text-[#F5F7F2] outline-none transition placeholder:text-white/35 focus:border-[#89FF00] focus:shadow-[0_0_0_3px_rgba(137,255,0,0.15)] dark:focus:border-[#C6FF00] dark:focus:shadow-[0_0_0_3px_rgba(198,255,0,0.15)]";
+  "w-full rounded-[12px] border border-[#11150D]/[0.12] bg-[#F7F9F4] px-4 py-[13px] text-[15px] text-[#11150D] outline-none transition placeholder:text-[#11150D]/35 focus:border-[#89FF00] focus:shadow-[0_0_0_3px_rgba(137,255,0,0.18)] dark:border-white/[0.12] dark:bg-white/[0.03] dark:text-[#F5F7F2] dark:placeholder:text-white/35 dark:focus:border-[#C6FF00] dark:focus:shadow-[0_0_0_3px_rgba(198,255,0,0.15)]";
 
 export default function ContactModal() {
   const [open, setOpen] = useState(false);
@@ -34,9 +34,24 @@ export default function ContactModal() {
   const [errors, setErrors] = useState<Partial<Record<keyof Inquiry, string>>>({});
   const [submitted, setSubmitted] = useState<Inquiry | null>(null);
   const [copied, setCopied] = useState(false);
+  const [isDark, setIsDark] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const nameRef = useRef<HTMLInputElement>(null);
   const lastFocused = useRef<HTMLElement | null>(null);
+
+  // Popup site ki theme follow karta hai — native controls (select
+  // dropdown waghera) ke liye current theme track karna parta hai
+  useEffect(() => {
+    const update = () =>
+      setIsDark(document.documentElement.classList.contains("dark"));
+    update();
+    const observer = new MutationObserver(update);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+    return () => observer.disconnect();
+  }, []);
 
   // Kisi bhi enquiry button se khulne wala listener
   useEffect(() => {
@@ -146,31 +161,31 @@ export default function ContactModal() {
         role="dialog"
         aria-modal="true"
         aria-labelledby="contact-modal-title"
-        style={{ colorScheme: "dark" }}
-        className="modal-panel modal-scroll relative max-h-[90dvh] w-full max-w-[660px] overflow-y-auto rounded-[20px] border border-white/10 bg-[#0B0E09] p-7 text-[#F5F7F2] shadow-[0_40px_90px_-20px_rgba(0,0,0,0.8)] sm:p-9"
+        style={{ colorScheme: isDark ? "dark" : "light" }}
+        className="modal-panel modal-scroll relative max-h-[90dvh] w-full max-w-[660px] overflow-y-auto rounded-[20px] border border-[#11150D]/10 bg-white p-7 text-[#11150D] shadow-[0_40px_90px_-20px_rgba(0,0,0,0.35)] dark:border-white/10 dark:bg-[#0B0E09] dark:text-[#F5F7F2] dark:shadow-[0_40px_90px_-20px_rgba(0,0,0,0.8)] sm:p-9"
       >
         <button
           type="button"
           onClick={close}
           aria-label="Close"
-          className="absolute right-5 top-5 flex h-10 w-10 items-center justify-center rounded-full bg-white/[0.06] transition hover:bg-white/[0.12]"
+          className="absolute right-5 top-5 flex h-10 w-10 items-center justify-center rounded-full bg-[#11150D]/[0.06] transition hover:bg-[#11150D]/[0.12] dark:bg-white/[0.06] dark:hover:bg-white/[0.12]"
         >
           <X size={18} />
         </button>
 
         {submitted ? (
           <div>
-            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#89FF00]/15 text-[#89FF00] dark:bg-[#C6FF00]/15 dark:text-[#C6FF00]">
+            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#89FF00]/15 text-[#458000] dark:bg-[#C6FF00]/15 dark:text-[#C6FF00]">
               <CheckCircle2 size={22} />
             </span>
             <h3 className="mt-4 font-heading text-2xl font-semibold">
               Your inquiry is ready
             </h3>
-            <p className="mt-2 text-[15px] leading-relaxed text-[#A5AAA0]">
+            <p className="mt-2 text-[15px] leading-relaxed text-[#11150D]/60 dark:text-[#A5AAA0]">
               Copy or download this summary and send it over — I&apos;ll get
               back to you as soon as possible.
             </p>
-            <pre className="mt-4 whitespace-pre-wrap rounded-[12px] bg-white/[0.04] p-4 text-sm leading-relaxed">
+            <pre className="mt-4 whitespace-pre-wrap rounded-[12px] bg-[#11150D]/[0.04] p-4 text-sm leading-relaxed dark:bg-white/[0.04]">
               {summary(submitted)}
             </pre>
             <div className="mt-6 flex flex-wrap gap-3">
@@ -184,7 +199,7 @@ export default function ContactModal() {
               <button
                 type="button"
                 onClick={download}
-                className="flex items-center gap-2 rounded-full border border-white/15 px-5 py-2.5 text-sm font-semibold"
+                className="flex items-center gap-2 rounded-full border border-[#11150D]/15 px-5 py-2.5 text-sm font-semibold dark:border-white/15"
               >
                 <Download size={15} /> Download .txt
               </button>
@@ -202,7 +217,7 @@ export default function ContactModal() {
           </div>
         ) : (
           <>
-            <p className="text-[13px] font-bold uppercase tracking-[0.14em] text-[#89FF00] dark:text-[#C6FF00]">
+            <p className="text-[13px] font-bold uppercase tracking-[0.14em] text-[#458000] dark:text-[#C6FF00]">
               Start a Project
             </p>
             <h3
@@ -211,7 +226,7 @@ export default function ContactModal() {
             >
               Let&apos;s Build Something Great.
             </h3>
-            <p className="mt-2 text-[15px] text-[#A5AAA0]">
+            <p className="mt-2 text-[15px] text-[#11150D]/60 dark:text-[#A5AAA0]">
               Tell me about your project and let&apos;s get started.
             </p>
 
@@ -228,7 +243,7 @@ export default function ContactModal() {
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   placeholder="Enter your name"
                 />
-                {errors.name && <p className="mt-1.5 text-sm text-red-400">{errors.name}</p>}
+                {errors.name && <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">{errors.name}</p>}
               </div>
               <div>
                 <label htmlFor="modal-email" className="mb-2 block text-[15px] font-semibold">
@@ -242,7 +257,7 @@ export default function ContactModal() {
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
                   placeholder="you@example.com"
                 />
-                {errors.email && <p className="mt-1.5 text-sm text-red-400">{errors.email}</p>}
+                {errors.email && <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">{errors.email}</p>}
               </div>
               <div>
                 <label htmlFor="modal-type" className="mb-2 block text-[15px] font-semibold">
@@ -262,7 +277,7 @@ export default function ContactModal() {
                   ))}
                 </select>
                 {errors.projectType && (
-                  <p className="mt-1.5 text-sm text-red-400">{errors.projectType}</p>
+                  <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">{errors.projectType}</p>
                 )}
               </div>
               <div>
@@ -278,7 +293,7 @@ export default function ContactModal() {
                   placeholder="Describe your idea..."
                 />
                 {errors.message && (
-                  <p className="mt-1.5 text-sm text-red-400">{errors.message}</p>
+                  <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">{errors.message}</p>
                 )}
               </div>
               <button
