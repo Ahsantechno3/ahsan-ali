@@ -300,7 +300,7 @@ export default function ContactModal() {
                 </label>
                 <select
                   id="modal-type"
-                  className={inputClass}
+                  className={`${inputClass} modal-select`}
                   value={form.projectType}
                   onChange={(e) => setForm({ ...form, projectType: e.target.value })}
                 >
