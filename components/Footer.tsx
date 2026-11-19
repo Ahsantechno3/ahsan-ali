@@ -1,10 +1,10 @@
 import { ArrowUp, Github, Heart, Linkedin, Mail, Twitter, Youtube } from "lucide-react";
-import { navLinks } from "@/lib/data";
 import Logo from "./Logo";
 
-// TODO: replace these platform homepages with your real profile URLs.
+// TODO: LinkedIn / X / YouTube abhi platform homepages hain — Ahsan apne
+// real profile URLs de to yahan lag jayenge. GitHub us ka asal profile hai.
 const socials = [
-  { label: "GitHub", href: "https://github.com", Icon: Github },
+  { label: "GitHub", href: "https://github.com/Ahsantechno3", Icon: Github },
   { label: "LinkedIn", href: "https://www.linkedin.com", Icon: Linkedin },
   { label: "Twitter / X", href: "https://x.com", Icon: Twitter },
   { label: "YouTube", href: "https://www.youtube.com", Icon: Youtube },
@@ -14,10 +14,11 @@ const socials = [
 export default function Footer() {
   return (
     <footer className="relative border-t border-black/[0.07] dark:border-white/[0.07]">
-      <div className="mx-auto max-w-7xl px-5 pb-8 pt-12 lg:px-8">
-        {/* top row: logo + tagline | socials | nav */}
-        <div className="flex flex-wrap items-center justify-between gap-x-10 gap-y-8">
-          <div className="flex items-center gap-3.5">
+      <div className="mx-auto max-w-7xl px-5 py-10 lg:px-8">
+        {/* ek hi row: logo + tagline (left) | copyright (center) | socials (right).
+            Footer nav links Ahsan ke kehne par hata diye gaye hain. */}
+        <div className="grid items-center gap-x-10 gap-y-7 md:grid-cols-[1fr_auto_1fr]">
+          <div className="flex items-center gap-3.5 justify-self-center md:justify-self-start">
             <span className="text-[#11150D] dark:text-[#F5F7F2]">
               <Logo size={44} />
             </span>
@@ -28,7 +29,15 @@ export default function Footer() {
             </p>
           </div>
 
-          <div className="flex gap-2.5">
+          {/* copyright — neeche wali bar se utha kar center mein, jahan
+              pehle socials the */}
+          <p className="flex flex-wrap items-center justify-center gap-1.5 text-center text-[12.5px] text-[#11150D]/50 dark:text-[#A5AAA0]">
+            © {new Date().getFullYear()}. All rights reserved. Designed with
+            <Heart size={12} className="text-red-500" fill="#ef4444" />
+            for a better web.
+          </p>
+
+          <div className="flex gap-2.5 justify-self-center md:justify-self-end">
             {socials.map(({ label, href, Icon }) => (
               <a
                 key={label}
@@ -43,26 +52,7 @@ export default function Footer() {
               </a>
             ))}
           </div>
-
-          <nav className="flex flex-wrap items-center gap-x-7 gap-y-2">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="text-[13.5px] font-medium text-[#11150D]/70 transition hover:text-[#11150D] dark:text-[#A5AAA0] dark:hover:text-[#C6FF00]"
-              >
-                {link.label}
-              </a>
-            ))}
-          </nav>
         </div>
-
-        {/* bottom copyright bar */}
-        <p className="mt-11 flex flex-wrap items-center justify-center gap-1.5 border-t border-black/[0.07] pt-6 text-center text-[12.5px] text-[#11150D]/50 dark:border-white/[0.07] dark:text-[#A5AAA0]">
-          © {new Date().getFullYear()}. All rights reserved. Designed with
-          <Heart size={12} className="text-red-500" fill="#ef4444" />
-          for a better web.
-        </p>
       </div>
 
       {/* back-to-top, fixed bottom-right like the reference */}
