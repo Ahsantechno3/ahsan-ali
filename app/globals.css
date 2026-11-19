@@ -185,19 +185,6 @@ h4 {
   background: #c6ff00;
 }
 
-/* Modal ke select ki khuli hui options list — native dropdown OS ki
-   marzi par chalta hai, is liye option ke rang alag se theme par set
-   kiye hain (warna dark theme mein safed list par safed text ghayab
-   ho jata hai) */
-.modal-select option {
-  background-color: #ffffff;
-  color: #11150d;
-}
-
-.dark .modal-select option {
-  background-color: #121610;
-  color: #f5f7f2;
-}
 
 .card-surface {
   border: 1px solid rgba(165, 170, 160, 0.18);

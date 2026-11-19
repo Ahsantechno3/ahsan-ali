@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
-import { ArrowUpRight, CheckCircle2, Copy, Download, X } from "lucide-react";
+import { ArrowUpRight, Check, CheckCircle2, ChevronDown, Copy, Download, X } from "lucide-react";
 import { contactEmail, projectTypes, web3formsAccessKey } from "@/lib/data";
 
 interface Inquiry {
@@ -37,6 +37,11 @@ export default function ContactModal() {
   const [sendError, setSendError] = useState("");
   const [copied, setCopied] = useState(false);
   const [isDark, setIsDark] = useState(false);
+  const [typeOpen, setTypeOpen] = useState(false);
+  const [typeHighlight, setTypeHighlight] = useState(0);
+  const typeRef = useRef<HTMLDivElement>(null);
+  const typeButtonRef = useRef<HTMLButtonElement>(null);
+  const typeOpenRef = useRef(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const nameRef = useRef<HTMLInputElement>(null);
   const lastFocused = useRef<HTMLElement | null>(null);
@@ -55,6 +60,46 @@ export default function ContactModal() {
     return () => observer.disconnect();
   }, []);
 
+  // Project type ki list — card se preselect hua naam list mein na ho
+  // to wo bhi sab se upar shamil ho jata hai
+  const typeOptions =
+    form.projectType && !projectTypes.includes(form.projectType)
+      ? [form.projectType, ...projectTypes]
+      : projectTypes;
+  const typeOptionsRef = useRef<string[]>(typeOptions);
+  typeOptionsRef.current = typeOptions;
+  const typeHighlightRef = useRef(0);
+
+  const chooseType = (type: string) => {
+    setForm((prev) => ({ ...prev, projectType: type }));
+    typeOpenRef.current = false;
+    setTypeOpen(false);
+    typeButtonRef.current?.focus();
+  };
+
+  const toggleType = () => {
+    if (!typeOpen) {
+      const idx = Math.max(0, typeOptions.indexOf(form.projectType));
+      typeHighlightRef.current = idx;
+      setTypeHighlight(idx);
+    }
+    typeOpenRef.current = !typeOpen;
+    setTypeOpen(!typeOpen);
+  };
+
+  // Type list ke bahir click — list band
+  useEffect(() => {
+    if (!typeOpen) return;
+    const onDown = (e: MouseEvent) => {
+      if (typeRef.current && !typeRef.current.contains(e.target as Node)) {
+        typeOpenRef.current = false;
+        setTypeOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", onDown);
+    return () => document.removeEventListener("mousedown", onDown);
+  }, [typeOpen]);
+
   // Kisi bhi enquiry button se khulne wala listener
   useEffect(() => {
     const handler = (event: Event) => {
@@ -67,6 +112,8 @@ export default function ContactModal() {
       setSubmitted(null);
       setErrors({});
       setSendError("");
+      typeOpenRef.current = false;
+      setTypeOpen(false);
       setOpen(true);
     };
     window.addEventListener("open-contact-modal", handler);
@@ -86,7 +133,33 @@ export default function ContactModal() {
 
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
+        // Pehle khuli hui type list band ho, phir modal
+        if (typeOpenRef.current) {
+          typeOpenRef.current = false;
+          setTypeOpen(false);
+          return;
+        }
         close();
+        return;
+      }
+      if (typeOpenRef.current && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
+        e.preventDefault();
+        const count = typeOptionsRef.current.length;
+        const nextIdx =
+          e.key === "ArrowDown"
+            ? (typeHighlightRef.current + 1) % count
+            : (typeHighlightRef.current - 1 + count) % count;
+        typeHighlightRef.current = nextIdx;
+        setTypeHighlight(nextIdx);
+        return;
+      }
+      if (typeOpenRef.current && e.key === "Enter") {
+        const options = typeOptionsRef.current;
+        const idx = typeHighlightRef.current;
+        if (options[idx]) {
+          e.preventDefault();
+          chooseType(options[idx]);
+        }
         return;
       }
       if (e.key === "Tab" && panelRef.current) {
@@ -298,22 +371,70 @@ export default function ContactModal() {
                 <label htmlFor="modal-type" className="mb-2 block text-[15px] font-semibold">
                   Project Type
                 </label>
-                <select
-                  id="modal-type"
-                  className={`${inputClass} modal-select`}
-                  value={form.projectType}
-                  onChange={(e) => setForm({ ...form, projectType: e.target.value })}
-                >
-                  <option value="" disabled>
-                    Select project type
-                  </option>
-                  {form.projectType && !projectTypes.includes(form.projectType) && (
-                    <option>{form.projectType}</option>
+                {/* Custom dropdown — native select ki list OS ki marzi par
+                    hoti hai (neela highlight, tez konay); ye wala poori
+                    tarah theme mein hai: gol konay, neon highlight bar */}
+                <div className="relative" ref={typeRef}>
+                  <button
+                    id="modal-type"
+                    type="button"
+                    ref={typeButtonRef}
+                    onClick={toggleType}
+                    aria-haspopup="listbox"
+                    aria-expanded={typeOpen}
+                    className={`${inputClass} flex items-center justify-between text-left`}
+                  >
+                    <span
+                      className={
+                        form.projectType
+                          ? ""
+                          : "text-[#11150D]/35 dark:text-white/35"
+                      }
+                    >
+                      {form.projectType || "Select project type"}
+                    </span>
+                    <ChevronDown
+                      size={17}
+                      className={`shrink-0 opacity-60 transition-transform ${
+                        typeOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+                  {typeOpen && (
+                    <div
+                      role="listbox"
+                      aria-label="Project type"
+                      className="modal-scroll absolute left-0 right-0 top-[calc(100%+6px)] z-20 max-h-60 overflow-y-auto rounded-[12px] border border-[#11150D]/10 bg-white p-1.5 shadow-[0_24px_50px_-12px_rgba(0,0,0,0.35)] dark:border-white/10 dark:bg-[#121610] dark:shadow-[0_24px_50px_-12px_rgba(0,0,0,0.7)]"
+                    >
+                      {typeOptions.map((type, idx) => {
+                        const selected = form.projectType === type;
+                        return (
+                          <button
+                            key={type}
+                            type="button"
+                            role="option"
+                            aria-selected={selected}
+                            onClick={() => chooseType(type)}
+                            onMouseEnter={() => {
+                              typeHighlightRef.current = idx;
+                              setTypeHighlight(idx);
+                            }}
+                            className={`flex w-full items-center justify-between rounded-[8px] px-3.5 py-2.5 text-left text-[15px] transition ${
+                              selected
+                                ? "bg-[#89FF00] font-semibold text-[#080A07] dark:bg-[#C6FF00]"
+                                : typeHighlight === idx
+                                  ? "bg-[#89FF00]/15 dark:bg-[#C6FF00]/15"
+                                  : ""
+                            }`}
+                          >
+                            {type}
+                            {selected && <Check size={16} className="shrink-0" />}
+                          </button>
+                        );
+                      })}
+                    </div>
                   )}
-                  {projectTypes.map((type) => (
-                    <option key={type}>{type}</option>
-                  ))}
-                </select>
+                </div>
                 {errors.projectType && (
                   <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">{errors.projectType}</p>
                 )}
