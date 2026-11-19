@@ -91,7 +91,7 @@ export default function Hero() {
             className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-black/[0.03] px-4 py-1.5 text-xs font-semibold dark:border-white/15 dark:bg-white/[0.04]"
           >
             <span className="h-2 w-2 rounded-full bg-[#89FF00] dark:bg-[#C6FF00] shadow-[0_0_10px_rgba(137,255,0,0.9)] dark:shadow-[0_0_10px_rgba(198,255,0,0.9)]" />
-            Freelance Web Developer
+            MERN Stack Developer
           </motion.span>
 
           <motion.h1
