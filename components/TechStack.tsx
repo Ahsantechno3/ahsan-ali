@@ -1,30 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Box,
-  Clapperboard,
-  Code2,
-  FileCode2,
-  MousePointerClick,
-  Sparkles,
-  Wind,
-} from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 import { techStack } from "@/lib/data";
 import type { TechItem } from "@/lib/data";
+import { techIconPaths } from "./tech-icons";
 import Reveal from "./Reveal";
 import SectionTag from "./SectionTag";
-
-const techIcons: Record<string, LucideIcon> = {
-  "Next.js": Code2,
-  "Tailwind CSS": Wind,
-  "Framer Motion": Clapperboard,
-  GSAP: Sparkles,
-  "Three.js": Box,
-  "Lucide React": MousePointerClick,
-  TypeScript: FileCode2,
-};
 
 type Filter = "all" | TechItem["category"];
 
@@ -71,12 +52,19 @@ export default function TechStack() {
 
       <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {visible.map((tech, i) => {
-          const Icon = techIcons[tech.name] ?? Code2;
+          const path = techIconPaths[tech.name];
           return (
             <Reveal key={tech.name} delay={i * 0.05}>
               <div className="card-surface flex h-full items-center gap-4 p-5">
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[10px] border border-[#89FF00]/25 dark:border-[#C6FF00]/25 bg-[#0d100b] text-[#89FF00] dark:text-[#C6FF00]">
-                  <Icon size={20} />
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[10px] border border-[#89FF00]/25 dark:border-[#C6FF00]/25 bg-[#0d100b]">
+                  {path && (
+                    <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
+                      <path
+                        d={path}
+                        className="[fill:#89FF00] dark:[fill:#C6FF00]"
+                      />
+                    </svg>
+                  )}
                 </span>
                 <div>
                   <h3 className="font-heading text-[19px] font-bold leading-tight">
