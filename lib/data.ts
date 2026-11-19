@@ -26,9 +26,9 @@ export interface ProcessStep {
 
 export const navLinks: { label: string; href: string }[] = [
   { label: "Home", href: "#home" },
-  { label: "Projects", href: "#projects" },
-  { label: "Services", href: "#services" },
   { label: "About", href: "#about" },
+  { label: "Services", href: "#services" },
+  { label: "Projects", href: "#projects" },
   { label: "Testimonials", href: "#testimonials" },
   { label: "Contact", href: "#contact" },
 ];

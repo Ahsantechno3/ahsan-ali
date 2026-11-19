@@ -9,7 +9,6 @@ export default function Header() {
   const [dark, setDark] = useState(true);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState("#home");
-  const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
     setDark(document.documentElement.classList.contains("dark"));
@@ -53,35 +52,6 @@ export default function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Scroll direction: page par neeche jate hue header upar slide hokar
-  // chhup jata hai, upar ki taraf scroll karte hi wapas aa jata hai.
-  // Top ke qareeb hamesha visible; mobile menu khula ho to bhi visible.
-  useEffect(() => {
-    if (open) setHidden(false);
-    let lastY = window.scrollY;
-    let ticking = false;
-    const update = () => {
-      ticking = false;
-      const y = window.scrollY;
-      if (open || y <= 160) {
-        setHidden(false);
-      } else if (y > lastY + 4) {
-        setHidden(true);
-      } else if (y < lastY - 4) {
-        setHidden(false);
-      }
-      lastY = y;
-    };
-    const onScroll = () => {
-      if (!ticking) {
-        ticking = true;
-        requestAnimationFrame(update);
-      }
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [open ]);
-
   const toggleTheme = () => {
     const next = !dark;
     setDark(next);
@@ -94,11 +64,7 @@ export default function Header() {
   };
 
   return (
-    <header
-      className={`sticky top-0 z-50 border-b border-black/5 bg-[#F7F9F4]/85 backdrop-blur transition-transform duration-300 dark:border-white/5 dark:bg-[#080A07]/85 ${
-        hidden ? "-translate-y-full" : "translate-y-0"
-      }`}
-    >
+    <header className="sticky top-0 z-50 border-b border-black/5 bg-[#F7F9F4]/85 backdrop-blur dark:border-white/5 dark:bg-[#080A07]/85">
       <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 lg:px-8">
         <a
           href="#home"
