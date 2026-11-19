@@ -147,7 +147,7 @@ export default function ContactModal() {
         aria-modal="true"
         aria-labelledby="contact-modal-title"
         style={{ colorScheme: "dark" }}
-        className="modal-panel relative max-h-[90dvh] w-full max-w-[560px] overflow-y-auto rounded-[20px] border border-white/10 bg-[#0B0E09] p-7 text-[#F5F7F2] shadow-[0_40px_90px_-20px_rgba(0,0,0,0.8)] sm:p-9"
+        className="modal-panel modal-scroll relative max-h-[90dvh] w-full max-w-[660px] overflow-y-auto rounded-[20px] border border-white/10 bg-[#0B0E09] p-7 text-[#F5F7F2] shadow-[0_40px_90px_-20px_rgba(0,0,0,0.8)] sm:p-9"
       >
         <button
           type="button"
