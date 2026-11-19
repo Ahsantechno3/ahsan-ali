@@ -46,7 +46,7 @@ export default function Footer() {
                   ? { target: "_blank", rel: "noreferrer" }
                   : {})}
                 aria-label={label}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 transition hover:border-[#C6FF00] hover:text-[#5c8400] dark:border-white/12 dark:hover:text-[#C6FF00]"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 transition hover:border-[#89FF00] dark:hover:border-[#C6FF00] hover:text-[#458000] dark:border-white/12 dark:hover:text-[#C6FF00]"
               >
                 <Icon size={16} />
               </a>
@@ -59,7 +59,7 @@ export default function Footer() {
       <a
         href="#home"
         aria-label="Back to top"
-        className="fixed bottom-6 right-6 z-40 flex h-11 w-11 items-center justify-center rounded-full bg-[#C6FF00] text-[#080A07] shadow-[0_10px_30px_rgba(198,255,0,0.4)] transition hover:shadow-[0_0_32px_rgba(198,255,0,0.65)]"
+        className="fixed bottom-6 right-6 z-40 flex h-11 w-11 items-center justify-center rounded-full bg-[#89FF00] dark:bg-[#C6FF00] text-[#080A07] shadow-[0_10px_30px_rgba(137,255,0,0.4)] dark:shadow-[0_10px_30px_rgba(198,255,0,0.4)] transition hover:shadow-[0_0_32px_rgba(137,255,0,0.65)] dark:hover:shadow-[0_0_32px_rgba(198,255,0,0.65)]"
       >
         <ArrowUp size={18} />
       </a>

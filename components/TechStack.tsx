@@ -44,7 +44,7 @@ export default function TechStack() {
       <Reveal>
         <SectionTag>Skills &amp; Technology</SectionTag>
         <h2 className="mt-4 text-4xl font-bold leading-[1.08] tracking-tight sm:text-[44px]">
-          Built With <span className="text-[#C6FF00]">Next.js + Tailwind CSS</span>
+          Built With <span className="text-[#89FF00] dark:text-[#C6FF00]">Next.js + Tailwind CSS</span>
         </h2>
         <p className="mt-3 max-w-xl text-[15px] text-[#11150D]/65 dark:text-[#A5AAA0]">
           This portfolio itself is written in exactly this stack — every technology
@@ -60,8 +60,8 @@ export default function TechStack() {
             onClick={() => setFilter(f.key)}
             className={`rounded-full px-5 py-2 text-sm font-semibold transition ${
               filter === f.key
-                ? "bg-[#C6FF00] text-[#080A07]"
-                : "border border-black/15 hover:border-[#C6FF00] dark:border-white/15"
+                ? "bg-[#89FF00] dark:bg-[#C6FF00] text-[#080A07]"
+                : "border border-black/15 hover:border-[#89FF00] dark:hover:border-[#C6FF00] dark:border-white/15"
             }`}
           >
             {f.label}
@@ -75,7 +75,7 @@ export default function TechStack() {
           return (
             <Reveal key={tech.name} delay={i * 0.05}>
               <div className="card-surface flex h-full items-center gap-4 p-5">
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[10px] border border-[#C6FF00]/25 bg-[#0d100b] text-[#C6FF00]">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[10px] border border-[#89FF00]/25 dark:border-[#C6FF00]/25 bg-[#0d100b] text-[#89FF00] dark:text-[#C6FF00]">
                   <Icon size={20} />
                 </span>
                 <div>

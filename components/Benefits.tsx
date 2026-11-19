@@ -40,7 +40,7 @@ export default function Benefits() {
                 <item.Icon
                   size={30}
                   strokeWidth={1.9}
-                  className="shrink-0 text-[#7fb800] drop-shadow-[0_0_12px_rgba(198,255,0,0.45)] dark:text-[#C6FF00]"
+                  className="shrink-0 text-[#458000] drop-shadow-[0_0_12px_rgba(137,255,0,0.45)] dark:drop-shadow-[0_0_12px_rgba(198,255,0,0.45)] dark:text-[#C6FF00]"
                 />
                 <div>
                   <p className="font-heading text-[26px] font-bold leading-none tracking-tight">

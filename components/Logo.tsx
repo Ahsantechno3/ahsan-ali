@@ -22,13 +22,13 @@ export default function Logo({ size = 38 }: { size?: number }) {
       />
       <path
         d="M20 16.5 L31 31"
-        stroke="#C6FF00"
+        className="[stroke:#89FF00] dark:[stroke:#C6FF00]"
         strokeWidth="4.6"
         strokeLinecap="round"
       />
       <path
         d="M10.5 23.5 L24 23.5"
-        stroke="#C6FF00"
+        className="[stroke:#89FF00] dark:[stroke:#C6FF00]"
         strokeWidth="3.6"
         strokeLinecap="round"
         opacity="0.9"

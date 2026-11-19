@@ -50,7 +50,7 @@ export default function Process() {
         <SectionTag>My Process</SectionTag>
         <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
           <h2 className="text-4xl font-bold leading-[1.08] tracking-tight sm:text-[44px]">
-            A Simple &amp; <span className="text-[#C6FF00]">Transparent Process.</span>
+            A Simple &amp; <span className="text-[#89FF00] dark:text-[#C6FF00]">Transparent Process.</span>
           </h2>
           <p className="max-w-sm text-[14.5px] leading-relaxed text-[#11150D]/60 dark:text-[#A5AAA0]">
             From idea to launch, I keep things simple, clear, and collaborative.
@@ -70,10 +70,10 @@ export default function Process() {
                 {i < processSteps.length - 1 && (
                   <div
                     aria-hidden="true"
-                    className="absolute left-[calc(50%+48px)] right-[calc(-50%+24px)] top-[35px] hidden h-[3px] opacity-50 lg:block bg-[radial-gradient(circle,#C6FF00_1.6px,transparent_1.7px)] bg-[size:11px_3px] bg-repeat-x"
+                    className="absolute left-[calc(50%+48px)] right-[calc(-50%+24px)] top-[35px] hidden h-[3px] opacity-50 lg:block bg-[radial-gradient(circle,#89FF00_1.6px,transparent_1.7px)] dark:bg-[radial-gradient(circle,#C6FF00_1.6px,transparent_1.7px)] bg-[size:11px_3px] bg-repeat-x"
                   />
                 )}
-                <span className="process-icon mx-auto flex h-[72px] w-[72px] items-center justify-center rounded-full border border-[#C6FF00]/45 bg-[#C6FF00]/[0.07] text-[#7fb800] transition-all duration-300 group-hover:border-[#C6FF00]/90 group-hover:shadow-[0_0_34px_rgba(198,255,0,0.5)] dark:text-[#C6FF00]">
+                <span className="process-icon mx-auto flex h-[72px] w-[72px] items-center justify-center rounded-full border border-[#89FF00]/45 dark:border-[#C6FF00]/45 bg-[#89FF00]/[0.07] dark:bg-[#C6FF00]/[0.07] text-[#458000] transition-all duration-300 group-hover:border-[#89FF00]/90 dark:group-hover:border-[#C6FF00]/90 group-hover:shadow-[0_0_34px_rgba(137,255,0,0.5)] dark:group-hover:shadow-[0_0_34px_rgba(198,255,0,0.5)] dark:text-[#C6FF00]">
                   <Icon size={26} />
                 </span>
                 <h3 className="mt-5 font-heading text-[16px] font-bold">

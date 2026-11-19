@@ -65,14 +65,23 @@ h4 {
 
 .card-surface:hover {
   transform: translateY(-6px);
+  border-color: rgba(137, 255, 0, 0.65);
+  box-shadow: 0 18px 50px -18px rgba(137, 255, 0, 0.35);
+}
+
+.dark .card-surface:hover {
   border-color: rgba(198, 255, 0, 0.65);
   box-shadow: 0 18px 50px -18px rgba(198, 255, 0, 0.35);
 }
 
 /* Subtle dotted texture used inside the testimonial card (reference style). */
 .dot-texture {
-  background-image: radial-gradient(rgba(198, 255, 0, 0.16) 1px, transparent 1.4px);
+  background-image: radial-gradient(rgba(137, 255, 0, 0.16) 1px, transparent 1.4px);
   background-size: 15px 15px;
+}
+
+.dark .dot-texture {
+  background-image: radial-gradient(rgba(198, 255, 0, 0.16) 1px, transparent 1.4px);
 }
 
 /* Faint code-key pattern for the laptop base. */
@@ -83,8 +92,12 @@ h4 {
 }
 
 ::selection {
-  background: #c6ff00;
+  background: #89ff00;
   color: #080a07;
+}
+
+.dark ::selection {
+  background: #c6ff00;
 }
 
 /* About portrait bottom shadow — Ahsan ki marking ke mutabiq:

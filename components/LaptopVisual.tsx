@@ -32,12 +32,12 @@ export default function LaptopVisual() {
               <span className="h-2 w-2 rounded-full bg-[#febc2e]/80" />
               <span className="h-2 w-2 rounded-full bg-[#28c840]/80" />
               <span className="ml-3 hidden h-3.5 w-32 rounded-full bg-white/10 sm:block" />
-              <span className="ml-auto hidden h-3.5 w-14 rounded-full bg-[#C6FF00]/25 sm:block" />
+              <span className="ml-auto hidden h-3.5 w-14 rounded-full bg-[#89FF00]/25 dark:bg-[#C6FF00]/25 sm:block" />
             </div>
 
             {/* faint code lines */}
             <div className="absolute left-4 top-12 space-y-2 opacity-35">
-              <div className="h-1.5 w-24 rounded bg-[#C6FF00]/70" />
+              <div className="h-1.5 w-24 rounded bg-[#89FF00]/70 dark:bg-[#C6FF00]/70" />
               <div className="h-1.5 w-36 rounded bg-white/40" />
               <div className="ml-4 h-1.5 w-28 rounded bg-sky-400/60" />
               <div className="ml-4 h-1.5 w-20 rounded bg-white/30" />
@@ -45,22 +45,22 @@ export default function LaptopVisual() {
             </div>
             <div className="absolute bottom-9 left-4 space-y-2 opacity-25">
               <div className="h-1.5 w-28 rounded bg-white/40" />
-              <div className="ml-4 h-1.5 w-16 rounded bg-[#C6FF00]/70" />
+              <div className="ml-4 h-1.5 w-16 rounded bg-[#89FF00]/70 dark:bg-[#C6FF00]/70" />
             </div>
 
             {/* big neon </> */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="font-mono text-[76px] font-bold tracking-tighter text-[#C6FF00] [text-shadow:0_0_18px_rgba(198,255,0,0.95),0_0_55px_rgba(198,255,0,0.6),0_0_110px_rgba(198,255,0,0.4)] sm:text-[104px]">
+              <span className="font-mono text-[76px] font-bold tracking-tighter text-[#89FF00] dark:text-[#C6FF00] [text-shadow:0_0_18px_rgba(137,255,0,0.95),0_0_55px_rgba(137,255,0,0.6),0_0_110px_rgba(137,255,0,0.4)] dark:[text-shadow:0_0_18px_rgba(198,255,0,0.95),0_0_55px_rgba(198,255,0,0.6),0_0_110px_rgba(198,255,0,0.4)] sm:text-[104px]">
                 &lt;/&gt;
               </span>
             </div>
 
             {/* status bar */}
-            <div className="absolute inset-x-0 bottom-0 flex items-center gap-2 bg-[#C6FF00]/10 px-3.5 py-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#C6FF00]" />
-              <span className="h-1 w-16 rounded bg-[#C6FF00]/50" />
+            <div className="absolute inset-x-0 bottom-0 flex items-center gap-2 bg-[#89FF00]/10 dark:bg-[#C6FF00]/10 px-3.5 py-1.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#89FF00] dark:bg-[#C6FF00]" />
+              <span className="h-1 w-16 rounded bg-[#89FF00]/50 dark:bg-[#C6FF00]/50" />
               <span className="h-1 w-10 rounded bg-white/25" />
-              <span className="ml-auto font-mono text-[9px] text-[#C6FF00]/80">
+              <span className="ml-auto font-mono text-[9px] text-[#89FF00]/80 dark:text-[#C6FF00]/80">
                 TypeScript
               </span>
             </div>
@@ -83,7 +83,7 @@ export default function LaptopVisual() {
           <div className="absolute left-1/2 top-[16px] h-[6px] w-[26%] -translate-x-1/2 rounded-[2px] bg-white/10" />
         </div>
         {/* neon front edge */}
-        <div className="mx-auto h-[2px] w-[112%] -translate-x-[5.5%] rounded-full bg-[#C6FF00]/80 blur-[1.5px]" />
+        <div className="mx-auto h-[2px] w-[112%] -translate-x-[5.5%] rounded-full bg-[#89FF00]/80 dark:bg-[#C6FF00]/80 blur-[1.5px]" />
       </div>
     </motion.div>
   );

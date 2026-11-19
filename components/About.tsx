@@ -35,7 +35,7 @@ export default function About() {
         <Reveal delay={0.08}>
           <SectionTag>About Me</SectionTag>
           <h2 className="mt-4 text-4xl font-bold leading-[1.08] tracking-tight sm:text-[44px]">
-            Turning Ideas Into <span className="text-[#C6FF00]">Powerful Websites.</span>
+            Turning Ideas Into <span className="text-[#89FF00] dark:text-[#C6FF00]">Powerful Websites.</span>
           </h2>
           <p className="mt-5 max-w-md text-[15px] leading-relaxed text-[#11150D]/70 dark:text-[#A5AAA0]">
             I&apos;m a passionate web developer who loves building modern,
@@ -44,7 +44,7 @@ export default function About() {
           </p>
           <a
             href="#contact"
-            className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#C6FF00] px-6 py-3 text-sm font-bold text-[#080A07] transition hover:shadow-[0_0_32px_rgba(198,255,0,0.55)]"
+            className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#89FF00] dark:bg-[#C6FF00] px-6 py-3 text-sm font-bold text-[#080A07] transition hover:shadow-[0_0_32px_rgba(137,255,0,0.55)] dark:hover:shadow-[0_0_32px_rgba(198,255,0,0.55)]"
           >
             Know More About Me <ArrowRight size={16} />
           </a>
@@ -57,7 +57,7 @@ export default function About() {
                 key={f.title}
                 className="flex items-center gap-4 rounded-2xl border border-black/[0.07] bg-white/70 px-4 py-3.5 dark:border-white/[0.08] dark:bg-white/[0.03]"
               >
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[10px] border border-[#C6FF00]/35 bg-[#C6FF00]/[0.06] text-[#7fb800] dark:text-[#C6FF00]">
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[10px] border border-[#89FF00]/35 dark:border-[#C6FF00]/35 bg-[#89FF00]/[0.06] dark:bg-[#C6FF00]/[0.06] text-[#458000] dark:text-[#C6FF00]">
                   <f.Icon size={21} />
                 </span>
                 <div>

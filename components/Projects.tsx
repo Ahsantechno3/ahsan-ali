@@ -40,9 +40,9 @@ function SneakerVisual() {
           <div className="h-1.5 w-14 rounded bg-white/70" />
           <div className="mt-2 h-1.5 w-10 rounded bg-white/30" />
           <p className="mt-3 font-heading text-[15px] font-bold text-white">
-            $129<span className="text-[#C6FF00]">.00</span>
+            $129<span className="text-[#89FF00] dark:text-[#C6FF00]">.00</span>
           </p>
-          <span className="mt-2 inline-block rounded-full bg-[#C6FF00] px-3 py-1 text-[9px] font-bold text-[#080A07]">
+          <span className="mt-2 inline-block rounded-full bg-[#89FF00] dark:bg-[#C6FF00] px-3 py-1 text-[9px] font-bold text-[#080A07]">
             Add to Cart
           </span>
         </div>
@@ -52,7 +52,7 @@ function SneakerVisual() {
           className="absolute -right-2 bottom-3 w-[74%] -rotate-[10deg] drop-shadow-[0_18px_20px_rgba(0,0,0,0.6)]"
           aria-hidden="true"
         >
-          <ellipse cx="105" cy="106" rx="88" ry="7" fill="#C6FF00" opacity="0.22" />
+          <ellipse cx="105" cy="106" rx="88" ry="7" className="[fill:#89FF00] dark:[fill:#C6FF00]" opacity="0.22" />
           <path
             d="M14 74 C48 72 66 64 88 50 C101 41 114 34 129 35 C149 37 168 52 184 64 C193 71 196 77 196 84 L14 84 Z"
             fill="#f4f6f1"
@@ -68,7 +68,7 @@ function SneakerVisual() {
           <path d="M96 52 l10 -6 M104 58 l10 -6 M112 63 l10 -6" stroke="#9aa393" strokeWidth="3" strokeLinecap="round" />
           <path
             d="M10 84 L200 84 L200 93 C200 98 196 100 190 100 L22 100 C14 100 10 94 10 84 Z"
-            fill="#C6FF00"
+            className="[fill:#89FF00] dark:[fill:#C6FF00]"
           />
           <path d="M10 93 L200 93" stroke="#0c0f09" strokeWidth="2" opacity="0.35" />
         </svg>
@@ -84,7 +84,7 @@ function DashboardVisual() {
       <div className="flex flex-1">
         {/* sidebar */}
         <div className="flex w-9 flex-col items-center gap-2.5 border-r border-white/[0.06] bg-white/[0.02] py-3">
-          <span className="h-3.5 w-3.5 rounded-[4px] bg-[#C6FF00]" />
+          <span className="h-3.5 w-3.5 rounded-[4px] bg-[#89FF00] dark:bg-[#C6FF00]" />
           <span className="h-2 w-2 rounded-full bg-white/30" />
           <span className="h-2 w-2 rounded-full bg-white/30" />
           <span className="h-2 w-2 rounded-full bg-white/30" />
@@ -98,7 +98,7 @@ function DashboardVisual() {
                 <div className="h-1 w-8 rounded bg-white/30" />
                 <p
                   className={`mt-1.5 font-heading text-[10px] font-bold ${
-                    i === 2 ? "text-[#C6FF00]" : "text-white"
+                    i === 2 ? "text-[#89FF00] dark:text-[#C6FF00]" : "text-white"
                   }`}
                 >
                   {v}
@@ -110,8 +110,8 @@ function DashboardVisual() {
           <svg viewBox="0 0 220 74" className="mt-2 w-full" aria-hidden="true">
             <defs>
               <linearGradient id="dashFill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#C6FF00" stopOpacity="0.4" />
-                <stop offset="100%" stopColor="#C6FF00" stopOpacity="0" />
+                <stop offset="0%" className="[stop-color:#89FF00] dark:[stop-color:#C6FF00]" stopOpacity="0.4" />
+                <stop offset="100%" className="[stop-color:#89FF00] dark:[stop-color:#C6FF00]" stopOpacity="0" />
               </linearGradient>
             </defs>
             {[14, 32, 50, 68].map((y) => (
@@ -124,7 +124,7 @@ function DashboardVisual() {
             <path
               d="M0 62 C26 56 38 38 60 42 C84 46 94 22 118 24 C142 26 152 38 176 26 C194 17 208 10 220 8"
               fill="none"
-              stroke="#C6FF00"
+              className="[stroke:#89FF00] dark:[stroke:#C6FF00]"
               strokeWidth="2.4"
               strokeLinecap="round"
             />
@@ -136,7 +136,7 @@ function DashboardVisual() {
               strokeLinecap="round"
               opacity="0.85"
             />
-            <circle cx="118" cy="24" r="3.4" fill="#C6FF00" stroke="#080d14" strokeWidth="1.6" />
+            <circle cx="118" cy="24" r="3.4" className="[fill:#89FF00] dark:[fill:#C6FF00]" stroke="#080d14" strokeWidth="1.6" />
           </svg>
         </div>
       </div>
@@ -182,7 +182,7 @@ function RealEstateVisual() {
       <span className="absolute bottom-8 left-3 rounded-full bg-black/55 px-2.5 py-1 text-[9px] font-bold text-white backdrop-blur">
         Modern Family Home
       </span>
-      <span className="absolute bottom-8 right-3 rounded-full bg-[#C6FF00] px-2.5 py-1 text-[9px] font-bold text-[#080A07]">
+      <span className="absolute bottom-8 right-3 rounded-full bg-[#89FF00] dark:bg-[#C6FF00] px-2.5 py-1 text-[9px] font-bold text-[#080A07]">
         New Listing
       </span>
     </div>
@@ -200,7 +200,7 @@ const visuals: Record<string, ComponentType> = {
 export default function Projects() {
   return (
     <section id="projects" className="relative overflow-hidden">
-      <div className="pointer-events-none absolute right-0 top-24 h-72 w-72 rounded-full bg-[#C6FF00]/7 blur-[120px]" />
+      <div className="pointer-events-none absolute right-0 top-24 h-72 w-72 rounded-full bg-[#89FF00]/7 dark:bg-[#C6FF00]/7 blur-[120px]" />
       <div className="relative mx-auto grid max-w-7xl gap-10 px-5 py-12 lg:grid-cols-[290px_1fr] lg:gap-12 lg:px-8 lg:py-14">
         {/* left header column, reference style */}
         <Reveal>
@@ -208,7 +208,7 @@ export default function Projects() {
           <h2 className="mt-4 text-4xl font-bold leading-[1.08] tracking-tight sm:text-[44px]">
             Real Problems.
             <br />
-            Thoughtful <span className="text-[#C6FF00]">Solutions.</span>
+            Thoughtful <span className="text-[#89FF00] dark:text-[#C6FF00]">Solutions.</span>
           </h2>
           <p className="mt-4 max-w-[260px] text-[15px] leading-relaxed text-[#11150D]/65 dark:text-[#A5AAA0]">
             From business websites to web applications, I create solutions that
@@ -216,7 +216,7 @@ export default function Projects() {
           </p>
           <a
             href="#contact"
-            className="mt-7 inline-flex items-center gap-2 rounded-full border border-[#C6FF00]/70 px-5 py-2.5 text-[13px] font-bold text-[#5c8400] transition hover:bg-[#C6FF00] hover:text-[#080A07] dark:text-[#C6FF00] dark:hover:text-[#080A07]"
+            className="mt-7 inline-flex items-center gap-2 rounded-full border border-[#89FF00]/70 dark:border-[#C6FF00]/70 px-5 py-2.5 text-[13px] font-bold text-[#458000] transition hover:bg-[#89FF00] dark:hover:bg-[#C6FF00] hover:text-[#080A07] dark:text-[#C6FF00] dark:hover:text-[#080A07]"
           >
             Explore All Projects <ArrowRight size={14} />
           </a>
@@ -233,7 +233,7 @@ export default function Projects() {
                     <div className="h-full transition duration-500 group-hover:scale-[1.06]">
                       <Visual />
                     </div>
-                    <span className="absolute right-3 top-3 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur transition group-hover:bg-[#C6FF00] group-hover:text-[#080A07]">
+                    <span className="absolute right-3 top-3 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur transition group-hover:bg-[#89FF00] dark:group-hover:bg-[#C6FF00] group-hover:text-[#080A07]">
                       <ArrowUpRight size={14} />
                     </span>
                   </div>
@@ -241,7 +241,7 @@ export default function Projects() {
                     <h3 className="font-heading text-[19px] font-bold leading-snug">
                       {project.title}
                     </h3>
-                    <p className="mt-1.5 flex items-center gap-1.5 text-[13px] font-semibold text-[#5c8400] dark:text-[#C6FF00]">
+                    <p className="mt-1.5 flex items-center gap-1.5 text-[13px] font-semibold text-[#458000] dark:text-[#C6FF00]">
                       {project.benefit}
                       <TrendingUp size={13} />
                     </p>
@@ -261,7 +261,7 @@ export default function Projects() {
                     <button
                       type="button"
                       onClick={() => prefillProject(project.title)}
-                      className="mt-5 inline-flex items-center gap-1.5 self-start pt-1 text-[13px] font-bold text-[#11150D] transition hover:text-[#5c8400] dark:text-[#F5F7F2] dark:hover:text-[#C6FF00]"
+                      className="mt-5 inline-flex items-center gap-1.5 self-start pt-1 text-[13px] font-bold text-[#11150D] transition hover:text-[#458000] dark:text-[#F5F7F2] dark:hover:text-[#C6FF00]"
                     >
                       Build something like this
                       <ArrowRight

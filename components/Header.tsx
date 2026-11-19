@@ -42,7 +42,7 @@ export default function Header() {
               href={link.href}
               className={`relative text-sm font-medium transition ${
                 link.label === "Home"
-                  ? "font-semibold text-[#11150D] after:absolute after:-bottom-[9px] after:left-0 after:h-[2.5px] after:w-full after:rounded-full after:bg-[#C6FF00] after:shadow-[0_0_8px_rgba(198,255,0,0.8)] dark:text-[#F5F7F2]"
+                  ? "font-semibold text-[#11150D] after:absolute after:-bottom-[9px] after:left-0 after:h-[2.5px] after:w-full after:rounded-full after:bg-[#89FF00] dark:after:bg-[#C6FF00] after:shadow-[0_0_8px_rgba(137,255,0,0.8)] dark:after:shadow-[0_0_8px_rgba(198,255,0,0.8)] dark:text-[#F5F7F2]"
                   : "text-[#11150D]/75 hover:text-[#11150D] dark:text-[#A5AAA0] dark:hover:text-[#C6FF00]"
               }`}
             >
@@ -56,13 +56,13 @@ export default function Header() {
             type="button"
             onClick={toggleTheme}
             aria-label="Toggle colour theme"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 transition hover:border-[#C6FF00] dark:border-white/15"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 transition hover:border-[#89FF00] dark:hover:border-[#C6FF00] dark:border-white/15"
           >
             {dark ? <Sun size={18} /> : <Moon size={18} />}
           </button>
           <a
             href="#contact"
-            className="hidden items-center gap-2 rounded-full bg-[#C6FF00] px-5 py-2.5 text-sm font-semibold text-[#080A07] transition hover:shadow-[0_0_28px_rgba(198,255,0,0.5)] sm:flex"
+            className="hidden items-center gap-2 rounded-full bg-[#89FF00] dark:bg-[#C6FF00] px-5 py-2.5 text-sm font-semibold text-[#080A07] transition hover:shadow-[0_0_28px_rgba(137,255,0,0.5)] dark:hover:shadow-[0_0_28px_rgba(198,255,0,0.5)] sm:flex"
           >
             Let&apos;s Talk <ArrowRight size={16} />
           </a>

@@ -47,12 +47,12 @@ export default function PortraitVisual() {
       >
         <defs>
           <linearGradient id="geoA" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#C6FF00" stopOpacity="0.95" />
-            <stop offset="100%" stopColor="#5c8400" stopOpacity="0.55" />
+            <stop offset="0%" className="[stop-color:#89FF00] dark:[stop-color:#C6FF00]" stopOpacity="0.95" />
+            <stop offset="100%" className="[stop-color:#458000] dark:[stop-color:#5c8400]" stopOpacity="0.55" />
           </linearGradient>
           <linearGradient id="geoB" x1="0" y1="1" x2="1" y2="0">
-            <stop offset="0%" stopColor="#C6FF00" stopOpacity="0.35" />
-            <stop offset="100%" stopColor="#C6FF00" stopOpacity="0.85" />
+            <stop offset="0%" className="[stop-color:#89FF00] dark:[stop-color:#C6FF00]" stopOpacity="0.35" />
+            <stop offset="100%" className="[stop-color:#89FF00] dark:[stop-color:#C6FF00]" stopOpacity="0.85" />
           </linearGradient>
         </defs>
         {/* bara solid triangle (play shape) — banner ki pehchan */}
@@ -64,12 +64,12 @@ export default function PortraitVisual() {
           cy="198"
           r="150"
           fill="none"
-          stroke="#C6FF00"
+          className="[stroke:#89FF00] dark:[stroke:#C6FF00]"
           strokeWidth="1.6"
           opacity="0.5"
         />
         {/* chhota triangle accent upar */}
-        <polygon points="122,20 172,104 72,104" fill="#C6FF00" opacity="0.22" />
+        <polygon points="122,20 172,104 72,104" className="[fill:#89FF00] dark:[fill:#C6FF00]" opacity="0.22" />
       </svg>
 
       {/* Three.js scene — scroll ke qareeb anay par mount hoti hai */}

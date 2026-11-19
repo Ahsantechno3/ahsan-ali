@@ -48,6 +48,9 @@ const CONFIG = {
   // Poora content (photo + lines) itna neeche shift hai ke photo ki
   // apni cut line frame se bahar chali jati hai — koi border nahi banta
   shiftY: -0.32,
+  // Lines ka rang theme ke hisaab se: dark mein asal neon, light mein
+  // zyada saturated green (warna light par pheeka lagta hai)
+  ringColorLight: 0x89ff00,
   camera: { fov: 35, z: 11 },
 };
 
@@ -101,34 +104,53 @@ export default function PortraitScene() {
     content.add(ringGroup);
 
     const ringItems: { pivot: THREE.Group; ring: RingCfg }[] = [];
+    const ringMaterials: { mat: THREE.MeshBasicMaterial; ring: RingCfg }[] = [];
     for (const r of CONFIG.rings) {
       const pivot = new THREE.Group();
       pivot.rotation.set(r.tiltX, 0, r.tiltZ);
       pivot.position.set(0, r.y, r.z);
       ringItems.push({ pivot, ring: r });
       // glow/shadow layer — same ring, fatter and soft
+      const glowMat = new THREE.MeshBasicMaterial({
+        color: r.color,
+        transparent: true,
+        opacity: r.glowOpacity,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+      });
       const glow = new THREE.Mesh(
         new THREE.TorusGeometry(r.radius, r.tube * 2.4, 16, 140),
-        new THREE.MeshBasicMaterial({
-          color: r.color,
-          transparent: true,
-          opacity: r.glowOpacity,
-          blending: THREE.AdditiveBlending,
-          depthWrite: false,
-        })
+        glowMat
       );
       // the line itself
+      const coreMat = new THREE.MeshBasicMaterial({
+        color: r.color,
+        transparent: r.opacity < 1,
+        opacity: r.opacity,
+      });
       const core = new THREE.Mesh(
         new THREE.TorusGeometry(r.radius, r.tube, 16, 140),
-        new THREE.MeshBasicMaterial({
-          color: r.color,
-          transparent: r.opacity < 1,
-          opacity: r.opacity,
-        })
+        coreMat
       );
+      ringMaterials.push({ mat: glowMat, ring: r }, { mat: coreMat, ring: r });
       pivot.add(glow, core);
       ringGroup.add(pivot);
     }
+
+    // Theme ke hisaab se lines ka rang: dark = CONFIG.color (neon),
+    // light = CONFIG.ringColorLight. Toggle par khud update ho jata hai.
+    const applyTheme = () => {
+      const isDark = document.documentElement.classList.contains("dark");
+      for (const { mat, ring } of ringMaterials) {
+        mat.color.setHex(isDark ? ring.color : CONFIG.ringColorLight);
+      }
+    };
+    applyTheme();
+    const themeObserver = new MutationObserver(applyTheme);
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
 
     let raf = 0;
     let running = false;
@@ -183,6 +205,7 @@ export default function PortraitScene() {
 
     return () => {
       stop();
+      themeObserver.disconnect();
       io.disconnect();
       ro.disconnect();
       scene.traverse((obj) => {
