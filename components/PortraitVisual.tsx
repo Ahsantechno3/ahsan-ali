@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useEffect, useRef, useState } from "react";
 
 const PortraitScene = dynamic(() => import("./PortraitScene"), { ssr: false });
 
@@ -12,8 +13,32 @@ const PortraitScene = dynamic(() => import("./PortraitScene"), { ssr: false });
  * shadow ya glow band nahi hai. Sab kuch still hai, koi animation nahi.
  */
 export default function PortraitVisual() {
+  // Performance: Three.js scene sirf tab load/mount hoti hai jab About
+  // section screen ke qareeb aye — page load par main-thread free rehta hai
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [showScene, setShowScene] = useState(false);
+
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShowScene(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "350px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
-    <div className="relative mx-auto h-[420px] w-full max-w-[350px] sm:h-[470px]">
+    <div
+      ref={wrapRef}
+      className="relative mx-auto h-[420px] w-full max-w-[350px] sm:h-[470px]"
+    >
       {/* solid neon background objects — banner style */}
       <svg
         viewBox="0 0 340 440"
@@ -47,10 +72,8 @@ export default function PortraitVisual() {
         <polygon points="122,20 172,104 72,104" fill="#C6FF00" opacity="0.22" />
       </svg>
 
-      {/* Three.js scene */}
-      <div className="absolute inset-0">
-        <PortraitScene />
-      </div>
+      {/* Three.js scene — scroll ke qareeb anay par mount hoti hai */}
+      <div className="absolute inset-0">{showScene && <PortraitScene />}</div>
 
       {/* bottom shadow — neeche (0 par) bilkul solid, upar jaty hue
           ahista ahista khatam ho jata hai */}

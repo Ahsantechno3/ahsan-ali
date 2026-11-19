@@ -22,7 +22,7 @@ interface RingCfg {
 // ============================================================================
 const CONFIG = {
   portrait: {
-    src: "/images/ahsan-portrait.png",
+    src: "/images/ahsan-portrait.webp", // WebP: 1.5 MB PNG ki jagah ~109 KB
     width: 4.8, // plane width (photo ka aspect 1086x1448 ≈ 0.75)
     height: 6.4, // plane height
   },
@@ -68,7 +68,7 @@ export default function PortraitScene() {
     camera.position.set(0, 0, CONFIG.camera.z);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.setClearColor(0x000000, 0);
     mount.appendChild(renderer.domElement);
 
@@ -122,21 +122,42 @@ export default function PortraitScene() {
     }
 
     let raf = 0;
+    let running = false;
+    let elapsed = 0;
     const clock = new THREE.Clock();
     const animate = () => {
+      if (!running) return;
       raf = requestAnimationFrame(animate);
-      const t = clock.getElapsedTime();
+      elapsed += Math.min(clock.getDelta(), 0.05);
       // Back line ki Z transition: wo ahista depth mein drift hoti hai
       // (kabhi thori qareeb, kabhi thori door) — is se wo flat nahi
       // lagti, real 3D lagti hai. Front line aur photo still hain.
       for (const item of ringItems) {
         if (item.ring.zAnim) {
           item.pivot.position.z =
-            item.ring.z + Math.sin(t * item.ring.zAnim.speed) * item.ring.zAnim.amp;
+            item.ring.z + Math.sin(elapsed * item.ring.zAnim.speed) * item.ring.zAnim.amp;
         }
       }
       renderer.render(scene, camera);
     };
+    // Performance: scene sirf tab render hoti hai jab screen par ho —
+    // off-screen par CPU/GPU kaam ruk jata hai
+    const start = () => {
+      if (!running) {
+        running = true;
+        clock.getDelta();
+        animate();
+      }
+    };
+    const stop = () => {
+      running = false;
+      cancelAnimationFrame(raf);
+    };
+    const io = new IntersectionObserver(
+      ([entry]) => (entry.isIntersecting ? start() : stop()),
+      { rootMargin: "100px" }
+    );
+    io.observe(mount);
 
     const resize = () => {
       const w = mount.clientWidth;
@@ -149,10 +170,11 @@ export default function PortraitScene() {
     const ro = new ResizeObserver(resize);
     ro.observe(mount);
     resize();
-    animate();
+    start();
 
     return () => {
-      cancelAnimationFrame(raf);
+      stop();
+      io.disconnect();
       ro.disconnect();
       scene.traverse((obj) => {
         if (obj instanceof THREE.Mesh) {

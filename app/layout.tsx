@@ -18,17 +18,27 @@ const description =
   "Freelance web developer building fast, modern websites that help businesses attract more customers and grow their brand — with Next.js, Tailwind CSS and TypeScript.";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://ahsan-ali-protfolio.vercel.app"),
   title: "Ahsan — Freelance Web Developer",
   description,
   openGraph: {
     title: "Ahsan — Freelance Web Developer",
     description,
     type: "website",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Ahsan — Freelance Web Developer",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Ahsan — Freelance Web Developer",
     description,
+    images: ["/og-image.png"],
   },
 };
 

@@ -284,7 +284,7 @@ export default function LaptopOrbitScene() {
     );
 
     const keyboardTexture = textureLoader.load(
-      "/images/keyboard-overlay.png"
+      "/images/keyboard-overlay.webp"
     );
 
     const screenMaterial = new THREE.MeshBasicMaterial({
@@ -546,10 +546,11 @@ export default function LaptopOrbitScene() {
     const clock = new THREE.Clock();
     let elapsed = 0;
     let screenOpacity = 0;
+    let sceneVisible = true;
     const parentWorldQuat = new THREE.Quaternion();
 
     const animate = () => {
-      if (disposed) return;
+      if (disposed || !sceneVisible) return;
       animationId = requestAnimationFrame(animate);
 
       const delta = Math.min(clock.getDelta(), 0.05);
@@ -636,6 +637,18 @@ export default function LaptopOrbitScene() {
 
     animate();
 
+    // Performance: hero screen se bahar ho to render loop ruk jata hai,
+    // wapas anay par khud start ho jata hai (CPU/main-thread bachane ke liye)
+    const visibilityObserver = new IntersectionObserver(
+      ([entry]) => {
+        const wasVisible = sceneVisible;
+        sceneVisible = entry.isIntersecting;
+        if (sceneVisible && !wasVisible && !disposed) animate();
+      },
+      { rootMargin: "80px" }
+    );
+    visibilityObserver.observe(mount);
+
     const resizeObserver = new ResizeObserver((entries) => {
       for (let entry of entries) {
         const width = entry.contentRect.width;
@@ -661,6 +674,7 @@ export default function LaptopOrbitScene() {
     return () => {
       disposed = true;
       cancelAnimationFrame(animationId);
+      visibilityObserver.disconnect();
       resizeObserver.disconnect();
       controls.dispose();
       environmentTexture.dispose();
