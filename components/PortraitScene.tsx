@@ -45,6 +45,9 @@ const CONFIG = {
       zAnim: { amp: 0.225, speed: 0.35 },
     },
   ] as RingCfg[],
+  // Poora content (photo + lines) itna neeche shift hai ke photo ki
+  // apni cut line frame se bahar chali jati hai — koi border nahi banta
+  shiftY: -0.32,
   camera: { fov: 35, z: 11 },
 };
 
@@ -72,6 +75,12 @@ export default function PortraitScene() {
     renderer.setClearColor(0x000000, 0);
     mount.appendChild(renderer.domElement);
 
+    // content group — photo aur lines dono is mein hain taake shift
+    // dono par barabar lage aur un ka aapas ka faasla na badle
+    const content = new THREE.Group();
+    content.position.y = CONFIG.shiftY;
+    scene.add(content);
+
     // --- portrait plane ---
     const texture = new THREE.TextureLoader().load(CONFIG.portrait.src);
     texture.colorSpace = THREE.SRGBColorSpace;
@@ -85,11 +94,11 @@ export default function PortraitScene() {
         side: THREE.DoubleSide,
       })
     );
-    scene.add(portrait);
+    content.add(portrait);
 
     // --- orbit rings (solid lines, no dots) ---
     const ringGroup = new THREE.Group();
-    scene.add(ringGroup);
+    content.add(ringGroup);
 
     const ringItems: { pivot: THREE.Group; ring: RingCfg }[] = [];
     for (const r of CONFIG.rings) {

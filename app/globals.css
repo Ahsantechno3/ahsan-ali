@@ -86,3 +86,14 @@ h4 {
   background: #c6ff00;
   color: #080a07;
 }
+
+/* About portrait bottom shadow — Ahsan ki marking ke mutabiq:
+   neeche (0%) bilkul SOLID page color, upar jaty hue intensity
+   seedhi line mein ZERO tak. Beech mein koi via/stop nahi hai. */
+.portrait-bottom-shadow {
+  background: linear-gradient(to top, #f7f9f4 0%, rgba(247, 249, 244, 0) 100%);
+}
+
+.dark .portrait-bottom-shadow {
+  background: linear-gradient(to top, #080a07 0%, rgba(8, 10, 7, 0) 100%);
+}

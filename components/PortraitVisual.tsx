@@ -75,9 +75,9 @@ export default function PortraitVisual() {
       {/* Three.js scene — scroll ke qareeb anay par mount hoti hai */}
       <div className="absolute inset-0">{showScene && <PortraitScene />}</div>
 
-      {/* bottom shadow — neeche (0 par) bilkul solid, upar jaty hue
-          ahista ahista khatam ho jata hai */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[38%] bg-gradient-to-t from-[#F7F9F4] via-[#F7F9F4]/35 to-transparent dark:from-[#080A07] dark:via-[#080A07]/35" />
+      {/* bottom shadow — neeche wali line par FULL SOLID, upar wali
+          line tak intensity ZERO (pure linear fade, .portrait-bottom-shadow) */}
+      <div className="portrait-bottom-shadow pointer-events-none absolute inset-x-0 bottom-0 h-[30%]" />
     </div>
   );
 }
