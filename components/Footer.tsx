@@ -1,15 +1,13 @@
-import { ArrowUp, Github, Heart, Linkedin, Mail, Twitter, Youtube } from "lucide-react";
+import { ArrowUp, Github, Heart, Linkedin, Mail } from "lucide-react";
 import { contactEmail } from "@/lib/data";
 import Logo from "./Logo";
 
-// LinkedIn aur Email Ahsan ke CV se asal hain. X / YouTube abhi platform
-// homepages hain — real profile URLs milen to yahan lag jayenge.
+// GitHub aur LinkedIn Ahsan ke asal profiles hain. X aur YouTube us ke
+// kehne par hata diye gaye hain (un par us ke profiles nahi hain).
+// Email ab sirf icon nahi — pura address text mein nazar ata hai.
 const socials = [
   { label: "GitHub", href: "https://github.com/Ahsantechno3", Icon: Github },
   { label: "LinkedIn", href: "https://www.linkedin.com/in/ahsan-ali-468453440", Icon: Linkedin },
-  { label: "Twitter / X", href: "https://x.com", Icon: Twitter },
-  { label: "YouTube", href: "https://www.youtube.com", Icon: Youtube },
-  { label: "Email", href: `mailto:${contactEmail}`, Icon: Mail },
 ];
 
 export default function Footer() {
@@ -38,20 +36,28 @@ export default function Footer() {
             for a better web.
           </p>
 
-          <div className="flex gap-2.5 justify-self-center md:justify-self-end">
-            {socials.map(({ label, href, Icon }) => (
-              <a
-                key={label}
-                href={href}
-                {...(href.startsWith("http")
-                  ? { target: "_blank", rel: "noreferrer" }
-                  : {})}
-                aria-label={label}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 transition hover:border-[#89FF00] dark:hover:border-[#C6FF00] hover:text-[#458000] dark:border-white/12 dark:hover:text-[#C6FF00]"
-              >
-                <Icon size={16} />
-              </a>
-            ))}
+          <div className="flex flex-col items-center gap-3 justify-self-center md:items-end md:justify-self-end">
+            <a
+              href={`mailto:${contactEmail}`}
+              className="flex items-center gap-2 text-[13px] font-medium text-[#11150D]/70 transition hover:text-[#458000] dark:text-[#A5AAA0] dark:hover:text-[#C6FF00]"
+            >
+              <Mail size={14} /> {contactEmail}
+            </a>
+            <div className="flex gap-2.5">
+              {socials.map(({ label, href, Icon }) => (
+                <a
+                  key={label}
+                  href={href}
+                  {...(href.startsWith("http")
+                    ? { target: "_blank", rel: "noreferrer" }
+                    : {})}
+                  aria-label={label}
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 transition hover:border-[#89FF00] dark:hover:border-[#C6FF00] hover:text-[#458000] dark:border-white/12 dark:hover:text-[#C6FF00]"
+                >
+                  <Icon size={16} />
+                </a>
+              ))}
+            </div>
           </div>
         </div>
       </div>
