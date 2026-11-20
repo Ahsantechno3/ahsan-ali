@@ -7,6 +7,13 @@ export interface Project {
   benefit: string;
   tags: string[];
   gradient: string;
+  /** Asal screenshot (public/ ke andar ka path) — ho to card par JSX mock
+      ki jagah ye image lagti hai. */
+  image?: string;
+  /** Live demo aur GitHub repo ke links — sirf un projects ke liye jo
+      publish ho chuke hain. */
+  liveUrl?: string;
+  repoUrl?: string;
 }
 
 export interface Service {
@@ -82,10 +89,13 @@ export const projects: Project[] = [
   {
     title: "Weather App",
     type: "Web Application",
-    description: "Responsive weather application with real-time weather data and API integration.",
+    description: "Modern weather app with live data for any city — a sky theme that matches the actual weather, a °C/°F toggle and detailed wind, humidity, UV and pressure stats.",
     benefit: "Live weather, beautifully simple",
-    tags: ["React.js", "REST API"],
+    tags: ["JavaScript", "REST API", "HTML/CSS"],
     gradient: "from-sky-400/25 via-lime-500/10 to-transparent",
+    image: "/images/projects/weather-app.jpg",
+    liveUrl: "https://malikahsandevi.github.io/weather-app/",
+    repoUrl: "https://github.com/malikahsandevi/weather-app",
   },
 ];
 
