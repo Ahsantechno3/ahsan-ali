@@ -81,10 +81,13 @@ export const projects: Project[] = [
   {
     title: "LeetCode User Finder",
     type: "Web Application",
-    description: "Web application for searching LeetCode users and displaying their coding statistics.",
+    description: "Look up any LeetCode profile — solved problems by difficulty, acceptance rate and reputation shown as interactive rings, with dark and light themes.",
     benefit: "Instant profiles and coding stats",
-    tags: ["React.js", "REST API"],
+    tags: ["JavaScript", "REST API", "HTML/CSS"],
     gradient: "from-amber-400/25 via-lime-500/10 to-transparent",
+    image: "/images/projects/leetcode-user-finder.jpg",
+    liveUrl: "https://malikahsandevi.github.io/leetcode-user-finder/",
+    repoUrl: "https://github.com/malikahsandevi/leetcode-user-finder",
   },
   {
     title: "Weather App",
