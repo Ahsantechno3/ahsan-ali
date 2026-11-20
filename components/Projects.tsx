@@ -1,7 +1,7 @@
 "use client";
 
 import type { ComponentType } from "react";
-import { ArrowRight, ArrowUpRight, Github, TrendingUp } from "lucide-react";
+import { ArrowRight, ArrowUpRight, TrendingUp } from "lucide-react";
 import { projects } from "@/lib/data";
 import { openContactModal } from "./ContactModal";
 import Reveal from "./Reveal";
@@ -239,9 +239,21 @@ export default function Projects() {
                         <Visual />
                       )}
                     </div>
-                    <span className="absolute right-3 top-3 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur transition group-hover:bg-[#89FF00] dark:group-hover:bg-[#C6FF00] group-hover:text-[#080A07]">
-                      <ArrowUpRight size={14} />
-                    </span>
+                    {project.liveUrl ? (
+                      <a
+                        href={project.liveUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`${project.title} — open live demo`}
+                        className="absolute right-3 top-3 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur transition hover:bg-[#89FF00] hover:text-[#080A07] group-hover:bg-[#89FF00] group-hover:text-[#080A07] dark:hover:bg-[#C6FF00] dark:group-hover:bg-[#C6FF00]"
+                      >
+                        <ArrowUpRight size={14} />
+                      </a>
+                    ) : (
+                      <span className="absolute right-3 top-3 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur transition group-hover:bg-[#89FF00] dark:group-hover:bg-[#C6FF00] group-hover:text-[#080A07]">
+                        <ArrowUpRight size={14} />
+                      </span>
+                    )}
                   </div>
                   <div className="flex flex-1 flex-col p-5">
                     <h3 className="font-heading text-[19px] font-bold leading-snug">
@@ -264,44 +276,17 @@ export default function Projects() {
                         </span>
                       ))}
                     </div>
-                    <div className="mt-5 flex items-center justify-between gap-3 pt-1">
-                      <button
-                        type="button"
-                        onClick={() => prefillProject(project.type)}
-                        className="inline-flex items-center gap-1.5 text-[13px] font-bold text-[#11150D] transition hover:text-[#458000] dark:text-[#F5F7F2] dark:hover:text-[#C6FF00]"
-                      >
-                        Build something like this
-                        <ArrowRight
-                          size={14}
-                          className="transition group-hover:translate-x-0.5"
-                        />
-                      </button>
-                      {(project.liveUrl || project.repoUrl) && (
-                        <span className="flex shrink-0 items-center gap-3">
-                          {project.liveUrl && (
-                            <a
-                              href={project.liveUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 text-[12.5px] font-bold text-[#458000] transition hover:underline dark:text-[#C6FF00]"
-                            >
-                              Live <ArrowUpRight size={13} />
-                            </a>
-                          )}
-                          {project.repoUrl && (
-                            <a
-                              href={project.repoUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              aria-label={`${project.title} on GitHub`}
-                              className="text-[#11150D]/60 transition hover:text-[#11150D] dark:text-white/60 dark:hover:text-white"
-                            >
-                              <Github size={16} />
-                            </a>
-                          )}
-                        </span>
-                      )}
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => prefillProject(project.type)}
+                      className="mt-5 inline-flex items-center gap-1.5 self-start pt-1 text-[13px] font-bold text-[#11150D] transition hover:text-[#458000] dark:text-[#F5F7F2] dark:hover:text-[#C6FF00]"
+                    >
+                      Build something like this
+                      <ArrowRight
+                        size={14}
+                        className="transition group-hover:translate-x-0.5"
+                      />
+                    </button>
                   </div>
                 </article>
               </Reveal>
