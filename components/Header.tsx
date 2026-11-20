@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { flushSync } from "react-dom";
 import { ArrowRight, Menu, Moon, Sun, X } from "lucide-react";
 import { navLinks } from "@/lib/data";
 import Logo from "./Logo";
@@ -53,15 +54,65 @@ export default function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const toggleTheme = () => {
-    const next = !dark;
-    setDark(next);
-    document.documentElement.classList.toggle("dark", next);
-    try {
-      localStorage.setItem("theme", next ? "dark" : "light");
-    } catch {
-      /* storage unavailable */
+  const toggleTheme = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const applyTheme = () => {
+      const next = !dark;
+      setDark(next);
+      document.documentElement.classList.toggle("dark", next);
+      try {
+        localStorage.setItem("theme", next ? "dark" : "light");
+      } catch {
+        /* storage unavailable */
+      }
+    };
+
+    // Circle reveal (Ahsan ki pasand): theme button se ek circle phailta
+    // hai jo puri window ko cover kar leta hai — circle ke ANDAR nayi
+    // theme hoti hai, bahir purani, jab tak circle poora na ho jaye.
+    // View Transitions API se hota hai; jahan support na ho ya user ne
+    // reduced motion rakha ho, wahan theme foran badal jati hai.
+    const doc = document as Document & {
+      startViewTransition?: (callback: () => void) => {
+        ready: Promise<void>;
+      };
+    };
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    if (!doc.startViewTransition || reduceMotion) {
+      applyTheme();
+      return;
     }
+
+    const x = event.clientX;
+    const y = event.clientY;
+    const endRadius = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y)
+    );
+
+    const transition = doc.startViewTransition(() => {
+      flushSync(applyTheme);
+    });
+    transition.ready
+      .then(() => {
+        document.documentElement.animate(
+          {
+            clipPath: [
+              `circle(0px at ${x}px ${y}px)`,
+              `circle(${endRadius}px at ${x}px ${y}px)`,
+            ],
+          },
+          {
+            duration: 650,
+            easing: "ease-in-out",
+            pseudoElement: "::view-transition-new(root)",
+          }
+        );
+      })
+      .catch(() => {
+        /* transition skip ho jaye to theme pehle hi badal chuki hoti hai */
+      });
   };
 
   return (

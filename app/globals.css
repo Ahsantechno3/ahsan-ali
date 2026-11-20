@@ -286,3 +286,12 @@ html.dark::-webkit-scrollbar-thumb:hover {
 .dark .portrait-bottom-shadow {
   background: linear-gradient(to top, #080a07 0%, rgba(8, 10, 7, 0) 100%);
 }
+
+/* Theme circle reveal: View Transition ki default cross-fade band hai —
+   nayi theme ka snapshot Header ke clip-path animation se circle ki
+   shakal mein phailta hai, purana snapshot us ke neeche rehta hai. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
