@@ -81,7 +81,7 @@ export const projects: Project[] = [
   {
     title: "LeetCode User Finder",
     type: "Web Application",
-    description: "Look up any LeetCode profile — solved problems by difficulty, acceptance rate and reputation shown as interactive rings, with dark and light themes.",
+    description: "Look up any LeetCode profile in a modern glass dashboard — solved progress ring, Easy/Medium/Hard bars, acceptance rate, ranking and reputation, with dark and light themes.",
     benefit: "Instant profiles and coding stats",
     tags: ["JavaScript", "REST API", "HTML/CSS"],
     gradient: "from-amber-400/25 via-lime-500/10 to-transparent",
