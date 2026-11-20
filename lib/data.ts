@@ -69,6 +69,9 @@ export const projects: Project[] = [
     benefit: "A complete store, from browsing to orders",
     tags: ["MongoDB", "Express.js", "React.js", "Node.js"],
     gradient: "from-lime-400/30 via-emerald-500/10 to-transparent",
+    image: "/images/projects/ecommerce-platform.jpg",
+    liveUrl: "https://ecommerce-admin-teal.vercel.app",
+    repoUrl: "https://github.com/malikahsandevi/ecommerce-platform",
   },
   {
     title: "Chrome Image Downloader",
