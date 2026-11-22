@@ -299,7 +299,7 @@ function ParticleCanvas({
       draw(0);
       return;
     }
-    const duration = 950;
+    const duration = 1050; // synced with ANIM_MS below
     let raf = 0;
     const t0 = performance.now();
     const tick = (now: number) => {
@@ -421,7 +421,7 @@ function ProjectCard({
 
 /* ── Section with the 3-card particle carousel ──────────────────── */
 
-const ANIM_MS = 950;
+const ANIM_MS = 1050;
 
 export default function Projects() {
   const total = projects.length;
@@ -518,15 +518,30 @@ export default function Projects() {
     return (
       <motion.div
         key={`${project.title}-anim`}
+        data-enter-card={role === "enter" ? "true" : undefined}
         className="relative h-full"
-        style={{ zIndex: role === "enter" ? 20 : 10 }}
+        style={{
+          zIndex: role === "enter" ? 20 : 10,
+          transformOrigin: "center center",
+        }}
         initial={
           role === "enter"
-            ? { opacity: 0, y: anim.dir === 1 ? 56 : -56 }
+            ? // Entering card: starts SMALL (0.85) with ZERO opacity below
+              // its slot, then grows to full size / max opacity in place.
+              { opacity: 0, scale: 0.85, y: anim.dir === 1 ? 56 : -56 }
             : { x: shiftFrom, opacity: 1 }
         }
-        animate={role === "enter" ? { opacity: 1, y: 0 } : { x: 0, opacity: 1 }}
-        transition={{ duration: ANIM_MS / 1000, ease: [0.22, 0.61, 0.36, 1] }}
+        animate={
+          role === "enter"
+            ? { opacity: 1, scale: 1, y: 0 }
+            : { x: 0, opacity: 1 }
+        }
+        transition={{
+          duration: ANIM_MS / 1000,
+          ease: [0.22, 0.61, 0.36, 1],
+          // Opacity fades in gradually across the whole duration.
+          opacity: { duration: ANIM_MS / 1000, ease: "linear" },
+        }}
       >
         <ProjectCard
           project={project}
@@ -592,13 +607,25 @@ export default function Projects() {
                     width: isMobile
                       ? "100%"
                       : "calc((100% - 2.5rem) / 3)",
+                    transformOrigin: "center center",
                   }}
-                  initial={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 1, y: 0, scale: 1 }}
                   animate={{
+                    // Exiting card: GROWS bigger while it leaves and its
+                    // opacity drops slowly to fully transparent; the anim
+                    // state is only cleared after this completes
+                    // (ANIM_MS + 60ms), so it is removed at opacity 0.
                     opacity: 0,
+                    scale: 1.22,
                     y: anim.dir === 1 ? -64 : 64,
                   }}
-                  transition={{ duration: ANIM_MS / 1000, ease: "easeIn" }}
+                  transition={{
+                    duration: ANIM_MS / 1000,
+                    ease: "easeIn",
+                    // Slow, gradual fade across the full duration —
+                    // not a quick fade at the end.
+                    opacity: { duration: ANIM_MS / 1000, ease: "linear" },
+                  }}
                 >
                   <ProjectCard
                     project={exitingProject}
