@@ -1,7 +1,9 @@
 "use client";
 
-import type { ComponentType } from "react";
-import { ArrowRight, ArrowUpRight, TrendingUp } from "lucide-react";
+import { useCallback, useEffect, useRef, useState, type ComponentType } from "react";
+import { ArrowDownLeft, ArrowRight, ArrowUpRight, TrendingUp } from "lucide-react";
+import { motion } from "framer-motion";
+import type { Project } from "@/lib/data";
 import { projects } from "@/lib/data";
 import { openContactModal } from "./ContactModal";
 import Reveal from "./Reveal";
@@ -191,9 +193,322 @@ const visuals: Record<string, ComponentType> = {
   "Real Estate Platform": RealEstateVisual,
 };
 
-/* ── Section ────────────────────────────────────────────────────── */
+/* ── Particle dissolve / materialise overlay ────────────────────
+   A grid of dots sampled over the card's box. "out": dots scatter
+   away and fade (destroy). "in": scattered dots converge onto the
+   grid and fade as the solid card appears (create). "peek": a
+   static half-dissolved dot layer for the mobile next-card hint. */
+
+type ParticleMode = "out" | "in" | "peek";
+
+function ParticleCanvas({
+  mode,
+  scatter = "up",
+}: {
+  mode: ParticleMode;
+  scatter?: "up" | "down";
+}) {
+  const ref = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = ref.current;
+    if (!canvas) return;
+    const parent = canvas.parentElement;
+    if (!parent) return;
+    const w = parent.clientWidth;
+    const h = parent.clientHeight;
+    if (w === 0 || h === 0) return;
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const dark = document.documentElement.classList.contains("dark");
+    const neon = dark ? "#C6FF00" : "#89FF00";
+    const palette = dark
+      ? ["#E9EEE2", "#9AA393", "#454B40", neon, neon]
+      : ["#151A10", "#5C6650", "#C4CCB6", neon, "#458000"];
+
+    const spacing = mode === "peek" ? 8 : 10;
+    type Dot = {
+      x: number; y: number; r: number; c: string;
+      dx: number; dy: number; delay: number;
+    };
+    const dots: Dot[] = [];
+    // Deterministic pseudo-random so SSR/hydration never matters (canvas only).
+    let seed = mode === "in" ? 1234567 : mode === "out" ? 7654321 : 2468135;
+    const rand = () => {
+      seed = (seed * 1103515245 + 12345) % 2147483648;
+      return seed / 2147483648;
+    };
+    for (let y = spacing / 2; y < h; y += spacing) {
+      for (let x = spacing / 2; x < w; x += spacing) {
+        const dirY = scatter === "up" ? -1 : 1;
+        dots.push({
+          x: x + (rand() - 0.5) * 4,
+          y: y + (rand() - 0.5) * 4,
+          r: 1 + rand() * 1.4,
+          c: palette[Math.floor(rand() * palette.length)],
+          dx: (rand() - 0.5) * 56,
+          dy: dirY * (30 + rand() * 130),
+          delay: rand() * 0.25,
+        });
+      }
+    }
+
+    const draw = (p: number) => {
+      ctx.clearRect(0, 0, w, h);
+      for (const d of dots) {
+        let px = d.x, py = d.y, alpha = 1;
+        if (mode === "out") {
+          const t = Math.min(1, Math.max(0, (p - d.delay) / (1 - d.delay)));
+          const e = t * t;
+          px = d.x + d.dx * e;
+          py = d.y + d.dy * e;
+          alpha = (1 - t) * 0.95;
+        } else if (mode === "in") {
+          const t = Math.min(1, Math.max(0, (p - d.delay * 0.4) / (1 - d.delay * 0.4)));
+          const e = 1 - (1 - t) * (1 - t);
+          px = d.x + d.dx * (1 - e);
+          py = d.y - d.dy * (1 - e); // converge from the opposite side
+          alpha = t < 0.65 ? 0.95 : 1 - (t - 0.65) / 0.35;
+        } else {
+          alpha = 0.12 + ((d.x * 7 + d.y * 13) % 10) / 18;
+        }
+        if (alpha <= 0.01) continue;
+        ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+        ctx.fillStyle = d.c;
+        ctx.beginPath();
+        ctx.arc(px, py, d.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    };
+
+    if (mode === "peek") {
+      draw(0);
+      return;
+    }
+    const duration = 950;
+    let raf = 0;
+    const t0 = performance.now();
+    const tick = (now: number) => {
+      const p = Math.min(1, (now - t0) / duration);
+      draw(p);
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [mode, scatter]);
+
+  return (
+    <canvas
+      ref={ref}
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 z-20 h-full w-full"
+    />
+  );
+}
+
+/* ── One project card (unchanged content + growing live badge) ─── */
+
+function ProjectCard({
+  project,
+  particle,
+  scatter,
+}: {
+  project: Project;
+  particle?: ParticleMode;
+  scatter?: "up" | "down";
+}) {
+  const Visual = visuals[project.title] ?? SneakerVisual;
+  return (
+    <article
+      data-project-card={project.title}
+      className="card-surface group relative flex h-full flex-col overflow-hidden !rounded-[14px]"
+    >
+      <div className="relative h-44 shrink-0 overflow-hidden">
+        <div className="h-full transition duration-500 group-hover:scale-[1.06]">
+          {project.image ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={project.image}
+              alt={`${project.title} — live app screenshot`}
+              className="h-full w-full object-cover object-top"
+              loading="lazy"
+            />
+          ) : (
+            <Visual />
+          )}
+        </div>
+        {project.liveUrl ? (
+          <a
+            href={project.liveUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${project.title} — open live demo`}
+            className="absolute right-3 top-3 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-[#89FF00] text-[#080A07] backdrop-blur transition-all duration-300 hover:bg-[#89FF00] dark:bg-[#C6FF00] dark:hover:bg-[#C6FF00] sm:h-7 sm:w-7 sm:bg-black/60 sm:text-white sm:hover:bg-[#89FF00] sm:hover:text-[#080A07] sm:group-hover:h-11 sm:group-hover:w-11 sm:group-hover:bg-[#89FF00] sm:group-hover:text-[#080A07] sm:dark:hover:bg-[#C6FF00] sm:dark:group-hover:bg-[#C6FF00]"
+          >
+            <ArrowUpRight className="h-5 w-5 transition-all duration-300 sm:h-[14px] sm:w-[14px] sm:group-hover:h-5 sm:group-hover:w-5" />
+          </a>
+        ) : (
+          <span className="absolute right-3 top-3 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-[#89FF00] text-[#080A07] backdrop-blur transition-all duration-300 dark:bg-[#C6FF00] sm:h-7 sm:w-7 sm:bg-black/60 sm:text-white sm:group-hover:h-11 sm:group-hover:w-11 sm:group-hover:bg-[#89FF00] sm:group-hover:text-[#080A07] sm:dark:group-hover:bg-[#C6FF00]">
+            <ArrowUpRight className="h-5 w-5 transition-all duration-300 sm:h-[14px] sm:w-[14px] sm:group-hover:h-5 sm:group-hover:w-5" />
+          </span>
+        )}
+      </div>
+      <div className="flex flex-1 flex-col p-5">
+        <h3 className="font-heading text-[19px] font-bold leading-snug">
+          {project.title}
+        </h3>
+        <p className="mt-1.5 flex items-center gap-1.5 text-[13px] font-semibold text-[#458000] dark:text-[#C6FF00]">
+          {project.benefit}
+          <TrendingUp size={13} />
+        </p>
+        <p className="mt-2.5 text-[13px] leading-relaxed text-[#11150D]/60 dark:text-[#A5AAA0]">
+          {project.description}
+        </p>
+        <div className="mt-4 flex flex-wrap gap-1.5">
+          {project.tags.map((tag) => (
+            <span
+              key={tag}
+              className="rounded-full bg-black/[0.05] px-2.5 py-1 text-[11px] font-medium dark:bg-white/[0.07]"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={() => prefillProject(project.type)}
+          className="mt-5 inline-flex items-center gap-1.5 self-start pt-1 text-[13px] font-bold text-[#11150D] transition hover:text-[#458000] dark:text-[#F5F7F2] dark:hover:text-[#C6FF00]"
+        >
+          Build something like this
+          <ArrowRight size={14} className="transition group-hover:translate-x-0.5" />
+        </button>
+      </div>
+      {particle ? <ParticleCanvas mode={particle} scatter={scatter} /> : null}
+    </article>
+  );
+}
+
+/* ── Section with the 3-card particle carousel ──────────────────── */
+
+const ANIM_MS = 950;
 
 export default function Projects() {
+  const total = projects.length;
+  const [start, setStart] = useState(0);
+  const [anim, setAnim] = useState<{ dir: 1 | -1; to: number } | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [reduced, setReduced] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const stateRef = useRef({ start, anim: !!anim });
+  stateRef.current = { start, anim: !!anim };
+
+  useEffect(() => {
+    const mqMobile = window.matchMedia("(max-width: 639px)");
+    const mqReduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const apply = () => {
+      setIsMobile(mqMobile.matches);
+      setReduced(mqReduced.matches);
+    };
+    apply();
+    mqMobile.addEventListener("change", apply);
+    mqReduced.addEventListener("change", apply);
+    return () => {
+      mqMobile.removeEventListener("change", apply);
+      mqReduced.removeEventListener("change", apply);
+    };
+  }, []);
+
+  const goTo = useCallback(
+    (to: number, dir: 1 | -1) => {
+      const target = ((to % total) + total) % total;
+      if (target === stateRef.current.start) return;
+      if (stateRef.current.anim) return;
+      if (reduced) {
+        setStart(target);
+        return;
+      }
+      setAnim({ dir, to: target });
+      setStart(target);
+      timerRef.current = setTimeout(() => setAnim(null), ANIM_MS + 60);
+    },
+    [reduced, total],
+  );
+
+  const next = useCallback(() => {
+    goTo(stateRef.current.start + 1, 1);
+  }, [goTo]);
+  const prev = useCallback(() => {
+    goTo(stateRef.current.start - 1, -1);
+  }, [goTo]);
+
+  // Gentle auto-cycle; pauses on hover / during animation / reduced motion.
+  useEffect(() => {
+    if (hovered || reduced) return;
+    const id = setInterval(() => {
+      if (!stateRef.current.anim && !document.hidden) next();
+    }, 5000);
+    return () => clearInterval(id);
+  }, [hovered, reduced, next]);
+
+  useEffect(
+    () => () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    },
+    [],
+  );
+
+  const visibleCount = isMobile ? 1 : 3;
+  const visible = Array.from(
+    { length: visibleCount },
+    (_, i) => projects[(start + i) % total],
+  );
+  const peekProject = projects[(start + visibleCount) % total];
+
+  // Cards displaced by the running transition, for motion assignment.
+  const exitingProject = anim
+    ? projects[
+        anim.dir === 1
+          ? (start - 1 + total) % total // was position 1
+          : isMobile
+            ? (start + 1) % total // was the single visible card
+            : (start + 3) % total // was position 3
+      ]
+    : null;
+
+  const renderSlot = (project: Project, slot: number) => {
+    if (!anim) return <ProjectCard key={project.title} project={project} />;
+    // Which role does this slot play in the transition?
+    let role: "shift" | "enter" | "plain" = "plain";
+    if (anim.dir === 1) role = slot === visibleCount - 1 ? "enter" : "shift";
+    else role = slot === 0 ? "enter" : "shift";
+    const shiftFrom =
+      anim.dir === 1 ? "calc(100% + 1.25rem)" : "calc(-100% - 1.25rem)";
+    return (
+      <motion.div
+        key={`${project.title}-anim`}
+        className="h-full"
+        initial={
+          role === "enter"
+            ? { opacity: 0, y: anim.dir === 1 ? 56 : -56 }
+            : { x: shiftFrom, opacity: 1 }
+        }
+        animate={role === "enter" ? { opacity: 1, y: 0 } : { x: 0, opacity: 1 }}
+        transition={{ duration: ANIM_MS / 1000, ease: [0.22, 0.61, 0.36, 1] }}
+      >
+        <ProjectCard
+          project={project}
+          particle={role === "enter" ? "in" : undefined}
+          scatter={anim.dir === 1 ? "up" : "down"}
+        />
+      </motion.div>
+    );
+  };
+
   return (
     <section id="projects" className="relative overflow-hidden">
       <div className="pointer-events-none absolute right-0 top-24 h-72 w-72 rounded-full bg-[#89FF00]/7 dark:bg-[#C6FF00]/7 blur-[120px]" />
@@ -218,80 +533,120 @@ export default function Projects() {
           </a>
         </Reveal>
 
-        {/* project cards */}
-        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-          {projects.map((project, i) => {
-            const Visual = visuals[project.title] ?? SneakerVisual;
-            return (
-              <Reveal key={project.title} delay={i * 0.1}>
-                <article className="card-surface group flex h-full flex-col overflow-hidden !rounded-[14px]">
-                  <div className="relative h-44 shrink-0 overflow-hidden">
-                    <div className="h-full transition duration-500 group-hover:scale-[1.06]">
-                      {project.image ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={project.image}
-                          alt={`${project.title} — live app screenshot`}
-                          className="h-full w-full object-cover object-top"
-                          loading="lazy"
-                        />
-                      ) : (
-                        <Visual />
-                      )}
-                    </div>
-                    {project.liveUrl ? (
-                      <a
-                        href={project.liveUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={`${project.title} — open live demo`}
-                        className="absolute right-3 top-3 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur transition hover:bg-[#89FF00] hover:text-[#080A07] group-hover:bg-[#89FF00] group-hover:text-[#080A07] dark:hover:bg-[#C6FF00] dark:group-hover:bg-[#C6FF00]"
-                      >
-                        <ArrowUpRight size={14} />
-                      </a>
-                    ) : (
-                      <span className="absolute right-3 top-3 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur transition group-hover:bg-[#89FF00] dark:group-hover:bg-[#C6FF00] group-hover:text-[#080A07]">
-                        <ArrowUpRight size={14} />
-                      </span>
-                    )}
+        {/* carousel: stage + right-side diagonal buttons */}
+        <div
+          data-testid="projects-carousel"
+          data-start={start}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+        >
+          <div className="flex items-stretch gap-3 sm:gap-4">
+            <div className="relative min-w-0 flex-1">
+              <div className="grid h-full gap-5 sm:grid-cols-3">
+                {visible.map((project, i) => (
+                  <div key={project.title} className="h-full min-w-0">
+                    {renderSlot(project, i)}
                   </div>
-                  <div className="flex flex-1 flex-col p-5">
-                    <h3 className="font-heading text-[19px] font-bold leading-snug">
-                      {project.title}
-                    </h3>
-                    <p className="mt-1.5 flex items-center gap-1.5 text-[13px] font-semibold text-[#458000] dark:text-[#C6FF00]">
-                      {project.benefit}
-                      <TrendingUp size={13} />
-                    </p>
-                    <p className="mt-2.5 text-[13px] leading-relaxed text-[#11150D]/60 dark:text-[#A5AAA0]">
-                      {project.description}
-                    </p>
-                    <div className="mt-4 flex flex-wrap gap-1.5">
-                      {project.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="rounded-full bg-black/[0.05] px-2.5 py-1 text-[11px] font-medium dark:bg-white/[0.07]"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => prefillProject(project.type)}
-                      className="mt-5 inline-flex items-center gap-1.5 self-start pt-1 text-[13px] font-bold text-[#11150D] transition hover:text-[#458000] dark:text-[#F5F7F2] dark:hover:text-[#C6FF00]"
-                    >
-                      Build something like this
-                      <ArrowRight
-                        size={14}
-                        className="transition group-hover:translate-x-0.5"
-                      />
-                    </button>
+                ))}
+              </div>
+
+              {/* exiting card: destroys into particles as it leaves */}
+              {anim && exitingProject ? (
+                <motion.div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute top-0 z-30 h-full"
+                  style={{
+                    left:
+                      anim.dir === 1 || isMobile
+                        ? 0
+                        : "calc((100% - 2.5rem) / 3 * 2 + 2.5rem)",
+                    width: isMobile
+                      ? "100%"
+                      : "calc((100% - 2.5rem) / 3)",
+                  }}
+                  initial={{ opacity: 1, y: 0 }}
+                  animate={{
+                    opacity: 0,
+                    y: anim.dir === 1 ? -64 : 64,
+                  }}
+                  transition={{ duration: ANIM_MS / 1000, ease: "easeIn" }}
+                >
+                  <ProjectCard
+                    project={exitingProject}
+                    particle="out"
+                    scatter={anim.dir === 1 ? "up" : "down"}
+                  />
+                </motion.div>
+              ) : null}
+
+              {/* mobile only: next card peeking below in destroyed form */}
+              {isMobile && !anim ? (
+                <div
+                  aria-hidden="true"
+                  data-peek-card={peekProject.title}
+                  className="relative mt-5 h-[110px] overflow-hidden rounded-[14px] opacity-70"
+                  style={{
+                    maskImage:
+                      "linear-gradient(to bottom, black 25%, transparent 98%)",
+                    WebkitMaskImage:
+                      "linear-gradient(to bottom, black 25%, transparent 98%)",
+                  }}
+                >
+                  <div className="pointer-events-none relative">
+                    <ProjectCard project={peekProject} particle="peek" />
                   </div>
-                </article>
-              </Reveal>
-            );
-          })}
+                </div>
+              ) : null}
+            </div>
+
+            {/* navigation buttons — right side, diagonal arrows */}
+            <div className="flex shrink-0 flex-col items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={next}
+                aria-label="Next projects"
+                data-carousel-next="true"
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-[#89FF00]/70 text-[#458000] transition hover:bg-[#89FF00] hover:text-[#080A07] dark:border-[#C6FF00]/70 dark:text-[#C6FF00] dark:hover:bg-[#C6FF00] dark:hover:text-[#080A07]"
+              >
+                <ArrowUpRight size={19} />
+              </button>
+              <button
+                type="button"
+                onClick={prev}
+                aria-label="Previous projects"
+                data-carousel-prev="true"
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-[#89FF00]/70 text-[#458000] transition hover:bg-[#89FF00] hover:text-[#080A07] dark:border-[#C6FF00]/70 dark:text-[#C6FF00] dark:hover:bg-[#C6FF00] dark:hover:text-[#080A07]"
+              >
+                <ArrowDownLeft size={19} />
+              </button>
+            </div>
+          </div>
+
+          {/* carousel dots — below the cards, all devices */}
+          <div
+            className="mt-6 flex items-center justify-center gap-2"
+            role="tablist"
+            aria-label="Project sets"
+          >
+            {projects.map((project, i) => (
+              <button
+                key={project.title}
+                type="button"
+                role="tab"
+                aria-selected={i === start}
+                aria-label={`Show projects starting with ${project.title}`}
+                data-carousel-dot={i}
+                onClick={() =>
+                  goTo(i, (i - start + total) % total <= total / 2 ? 1 : -1)
+                }
+                className={`h-2.5 rounded-full transition-all duration-300 ${
+                  i === start
+                    ? "w-7 bg-[#89FF00] dark:bg-[#C6FF00]"
+                    : "w-2.5 bg-black/20 hover:bg-black/35 dark:bg-white/20 dark:hover:bg-white/35"
+                }`}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>
