@@ -224,11 +224,21 @@ const ProjectCard = memo(function ProjectCard({ project }: { project: Project })
             aria-label={`${project.title} — open live demo`}
             className="absolute right-3 top-3 z-20 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur transition-all duration-300 group-hover:right-[-34px] group-hover:top-[-34px] group-hover:h-[128px] group-hover:w-[128px] group-hover:bg-[#89FF00] group-hover:text-[#080A07] hover:bg-[#89FF00] hover:text-[#080A07] dark:group-hover:bg-[#C6FF00] dark:hover:bg-[#C6FF00]"
           >
-            <ArrowUpRight className="h-[14px] w-[14px] [stroke-width:2] transition-all duration-300 group-hover:h-[54px] group-hover:w-[54px] group-hover:-translate-x-[10px] group-hover:translate-y-[10px] group-hover:[stroke-width:3]" />
+            <ArrowUpRight className="absolute inset-0 m-auto h-[14px] w-[14px] [stroke-width:2] transition-opacity duration-300 group-hover:opacity-0" />
+            {/* Hover arrow: custom SVG — Lucide se lambi tail (M4 20 se) aur bareek 1.5 stroke, Ahsan ke kehne par */}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="absolute inset-0 m-auto h-[54px] w-[54px] opacity-0 transition-all duration-300 group-hover:-translate-x-[10px] group-hover:translate-y-[10px] group-hover:opacity-100">
+              <path d="M4 20 L17 7" />
+              <path d="M7 7h10v10" />
+            </svg>
           </a>
         ) : (
           <span className="absolute right-3 top-3 z-20 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur transition-all duration-300 group-hover:right-[-34px] group-hover:top-[-34px] group-hover:h-[128px] group-hover:w-[128px] group-hover:bg-[#89FF00] group-hover:text-[#080A07] dark:group-hover:bg-[#C6FF00]">
-            <ArrowUpRight className="h-[14px] w-[14px] [stroke-width:2] transition-all duration-300 group-hover:h-[54px] group-hover:w-[54px] group-hover:-translate-x-[10px] group-hover:translate-y-[10px] group-hover:[stroke-width:3]" />
+            <ArrowUpRight className="absolute inset-0 m-auto h-[14px] w-[14px] [stroke-width:2] transition-opacity duration-300 group-hover:opacity-0" />
+            {/* Hover arrow: custom SVG — Lucide se lambi tail (M4 20 se) aur bareek 1.5 stroke, Ahsan ke kehne par */}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="absolute inset-0 m-auto h-[54px] w-[54px] opacity-0 transition-all duration-300 group-hover:-translate-x-[10px] group-hover:translate-y-[10px] group-hover:opacity-100">
+              <path d="M4 20 L17 7" />
+              <path d="M7 7h10v10" />
+            </svg>
           </span>
         )}
       </div>
