@@ -202,17 +202,14 @@ export default function LaptopOrbitScene() {
       )
     );
 
-    const sunLight = new THREE.PointLight(
-      CONFIG.lights.sunColor,
-      CONFIG.lights.sunIntensity,
-      CONFIG.lights.sunDistance
-    );
-    sunLight.position.set(
-      CONFIG.lights.sunPositionX,
-      CONFIG.lights.sunPositionY,
-      CONFIG.lights.sunPositionZ
-    );
-    scene.add(sunLight);
+    // NOTE: pehle yahan CONFIG.lights.sun wali green point light thi, jo laptop
+    // ke bilkul center (0, 5, 0) par thi — lid ki back surface se sirf ~1 unit
+    // door. Itni qareeb honay ki wajah se us ki roshni lid ke peeche Apple logo
+    // ke neeche aik FIXED bright green dot ki shakal mein jalti thi (jo har
+    // reload par bilkul usi jagah aata tha). Ahsan ke kehne par wo light hata
+    // di gayi hai — baqi lighting (environment + ambient + fill) hi laptop ki
+    // asal look hai, us mein koi farq nahi aaya. CONFIG.lights.sun ki values
+    // sirf reference ke liye rehne di gayi hain.
 
     const fillLight = new THREE.PointLight(
       CONFIG.lights.fillColor,
