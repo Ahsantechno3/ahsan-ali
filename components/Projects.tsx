@@ -313,11 +313,16 @@ export default function Projects() {
     [reduced, total],
   );
 
+  // Mirrored flow (Ahsan's direction inversion): on NEXT the cards travel
+  // LEFT→RIGHT — position 3 exits, 1→2 and 2→3 slide right, the new card
+  // enters at position 1 — so the window steps BACK through the same
+  // rotation. PREV is the exact reverse. The dots are untouched: they
+  // still follow `start` exactly as before.
   const next = useCallback(() => {
-    goTo(stateRef.current.start + 1, 1);
+    goTo(stateRef.current.start - 1, 1);
   }, [goTo]);
   const prev = useCallback(() => {
-    goTo(stateRef.current.start - 1, -1);
+    goTo(stateRef.current.start + 1, -1);
   }, [goTo]);
 
   // Gentle auto-cycle; pauses on hover / during animation / reduced motion.
@@ -341,27 +346,32 @@ export default function Projects() {
     { length: visibleCount },
     (_, i) => projects[(start + i) % total],
   );
-  const peekProject = projects[(start + visibleCount) % total];
 
   // Cards displaced by the running transition, for motion assignment.
+  // Mirrored: NEXT (dir 1) pushes the RIGHTMOST card out — with the new
+  // window starting at `start`, that is the card at start+visibleCount
+  // (desktop position 3; on mobile the single visible card). PREV
+  // (dir -1) pushes out the card that was at position 1 (start-1).
   const exitingProject = anim
     ? projects[
         anim.dir === 1
-          ? (start - 1 + total) % total // was position 1
-          : isMobile
-            ? (start + 1) % total // was the single visible card
-            : (start + 3) % total // was position 3
+          ? (start + visibleCount) % total // was position 3 / the mobile card
+          : (start - 1 + total) % total // was position 1
       ]
     : null;
 
   const renderSlot = (project: Project, slot: number) => {
     if (!anim) return <ProjectCard key={project.title} project={project} />;
-    // Which role does this slot play in the transition?
+    // Which role does this slot play in the transition? Mirrored flow:
+    // NEXT (dir 1) — the NEW card enters at position 1 (slot 0) and the
+    // others SHIFT RIGHT (they start one slot to the LEFT of their new
+    // slot and travel left→right into place). PREV (dir -1) — the new
+    // card enters at the last slot and the others shift left.
     let role: "shift" | "enter" | "plain" = "plain";
-    if (anim.dir === 1) role = slot === visibleCount - 1 ? "enter" : "shift";
-    else role = slot === 0 ? "enter" : "shift";
+    if (anim.dir === 1) role = slot === 0 ? "enter" : "shift";
+    else role = slot === visibleCount - 1 ? "enter" : "shift";
     const shiftFrom =
-      anim.dir === 1 ? "calc(100% + 1.25rem)" : "calc(-100% - 1.25rem)";
+      anim.dir === 1 ? "calc(-100% - 1.25rem)" : "calc(100% + 1.25rem)";
     return (
       <motion.div
         key={`${project.title}-anim`}
@@ -396,11 +406,17 @@ export default function Projects() {
   };
 
   return (
-    <section id="projects" className="relative overflow-hidden">
+    <section id="projects" className="relative overflow-clip">
       <div className="pointer-events-none absolute right-0 top-24 h-72 w-72 rounded-full bg-[#89FF00]/7 dark:bg-[#C6FF00]/7 blur-[120px]" />
       <div className="relative mx-auto grid max-w-7xl gap-10 px-5 py-12 lg:grid-cols-[290px_1fr] lg:gap-12 lg:px-8 lg:py-14">
-        {/* left header column, reference style */}
-        <Reveal>
+        {/* left header column, reference style — STICKY on desktop
+            (Ahsan: "left section scroll me uper stuck rhy jab tak wo
+            section scroll nhi hota"): pinned under the header while the
+            Projects section scrolls past, releases at the section end.
+            Only at lg, where the two-column layout applies; stacked
+            layouts (mobile/tablet) scroll normally. */}
+        <div className="lg:sticky lg:top-24 lg:self-start">
+          <Reveal>
           <SectionTag>My Projects</SectionTag>
           <h2 className="mt-4 text-4xl font-bold leading-[1.08] tracking-tight sm:text-[44px]">
             Real Problems.
@@ -417,7 +433,8 @@ export default function Projects() {
           >
             Explore All Projects <ArrowRight size={14} />
           </a>
-        </Reveal>
+          </Reveal>
+        </div>
 
         {/* carousel: stage + right-side diagonal buttons */}
         <div
@@ -444,7 +461,7 @@ export default function Projects() {
                   className="pointer-events-none absolute top-0 z-40 h-full overflow-visible"
                   style={{
                     left:
-                      anim.dir === 1 || isMobile
+                      anim.dir === -1 || isMobile
                         ? 0
                         : "calc((100% - 2.5rem) / 3 * 2 + 2.5rem)",
                     width: isMobile
@@ -474,24 +491,10 @@ export default function Projects() {
                 </motion.div>
               ) : null}
 
-              {/* mobile only: next card peeking below, clipped with a fade */}
-              {isMobile && !anim ? (
-                <div
-                  aria-hidden="true"
-                  data-peek-card={peekProject.title}
-                  className="relative z-0 mt-5 h-[110px] overflow-hidden rounded-[14px] opacity-70"
-                  style={{
-                    maskImage:
-                      "linear-gradient(to bottom, black 25%, transparent 98%)",
-                    WebkitMaskImage:
-                      "linear-gradient(to bottom, black 25%, transparent 98%)",
-                  }}
-                >
-                  <div className="pointer-events-none relative">
-                    <ProjectCard project={peekProject} />
-                  </div>
-                </div>
-              ) : null}
+              {/* mobile: ONLY the single full card shows — the 110px peek
+                  of the next card is REMOVED completely (Ahsan: "second
+                  nichy wala na ho mobile me"). The single card simply
+                  swaps on next/prev/auto-cycle. */}
             </div>
 
             {/* navigation buttons — right side, diagonal arrows */}
