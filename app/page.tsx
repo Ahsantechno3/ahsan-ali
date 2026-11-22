@@ -8,7 +8,7 @@ import TechStack from "@/components/TechStack";
 import Process from "@/components/Process";
 import Testimonials from "@/components/Testimonials";
 import Contact from "@/components/Contact";
-import ContactModal from "@/components/ContactModal";
+import ContactModalLazy from "@/components/ContactModalLazy";
 import Footer from "@/components/Footer";
 import ScrollProgress from "@/components/ScrollProgress";
 
@@ -29,7 +29,7 @@ export default function Home() {
         <Contact />
       </main>
       <Footer />
-      <ContactModal />
+      <ContactModalLazy />
     </div>
   );
 }

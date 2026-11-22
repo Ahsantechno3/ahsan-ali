@@ -2,7 +2,7 @@
 
 import { Send } from "lucide-react";
 import Reveal from "./Reveal";
-import { openContactModal } from "./ContactModal";
+import { openContactModal } from "./openContactModal";
 
 /**
  * Contact section — sirf CTA banner. Form ab reusable modal mein hai

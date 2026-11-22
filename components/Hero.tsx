@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import gsap from "gsap";
 import { ArrowRight, Play } from "lucide-react";
-import { openContactModal } from "./ContactModal";
+import { openContactModal } from "./openContactModal";
 // Three.js must only run in the browser.
 const LaptopOrbitScene = dynamic(() => import("./LaptopOrbitScene"), {
   ssr: false,

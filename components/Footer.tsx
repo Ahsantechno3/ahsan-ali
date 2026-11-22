@@ -2,7 +2,7 @@
 
 import { ArrowUp, Github, Heart, Linkedin, Mail } from "lucide-react";
 import Logo from "./Logo";
-import { openContactModal } from "./ContactModal";
+import { openContactModal } from "./openContactModal";
 
 // GitHub aur LinkedIn Ahsan ke asal profiles hain. X aur YouTube us ke
 // kehne par hata diye gaye hain (un par us ke profiles nahi hain).

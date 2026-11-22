@@ -1,11 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type ComponentType } from "react";
+import { memo, useCallback, useEffect, useRef, useState, type ComponentType } from "react";
 import { ArrowDownLeft, ArrowRight, ArrowUpRight, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
 import type { Project } from "@/lib/data";
 import { projects } from "@/lib/data";
-import { openContactModal } from "./ContactModal";
+import { openContactModal } from "./openContactModal";
 import Reveal from "./Reveal";
 import SectionTag from "./SectionTag";
 
@@ -195,7 +195,7 @@ const visuals: Record<string, ComponentType> = {
 
 /* ── One project card (unchanged content + growing live badge) ─── */
 
-function ProjectCard({ project }: { project: Project }) {
+const ProjectCard = memo(function ProjectCard({ project }: { project: Project }) {
   const Visual = visuals[project.title] ?? SneakerVisual;
   return (
     <article
@@ -264,7 +264,7 @@ function ProjectCard({ project }: { project: Project }) {
       </div>
     </article>
   );
-}
+});
 
 /* ── Section with the 3-card carousel ─────────────────────────── */
 

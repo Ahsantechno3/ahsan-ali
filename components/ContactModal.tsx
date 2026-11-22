@@ -19,11 +19,7 @@ const empty: Inquiry = { name: "", email: "", projectType: "", message: "" };
  * aik hi reusable modal khul jata hai. projectType diya jaye to
  * wo type pehle se select ho jati hai.
  */
-export function openContactModal(projectType?: string) {
-  window.dispatchEvent(
-    new CustomEvent<string>("open-contact-modal", { detail: projectType ?? "" })
-  );
-}
+export { openContactModal } from "./openContactModal";
 
 const inputClass =
   "w-full rounded-[12px] border border-[#11150D]/[0.12] bg-[#F7F9F4] px-4 py-[13px] text-[15px] text-[#11150D] outline-none transition placeholder:text-[#11150D]/35 focus:border-[#89FF00] focus:shadow-[0_0_0_3px_rgba(137,255,0,0.18)] dark:border-white/[0.12] dark:bg-white/[0.03] dark:text-[#F5F7F2] dark:placeholder:text-white/35 dark:focus:border-[#C6FF00] dark:focus:shadow-[0_0_0_3px_rgba(198,255,0,0.15)]";

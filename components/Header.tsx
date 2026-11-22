@@ -5,7 +5,7 @@ import { flushSync } from "react-dom";
 import { ArrowRight, Menu, Moon, Sun, X } from "lucide-react";
 import { navLinks } from "@/lib/data";
 import Logo from "./Logo";
-import { openContactModal } from "./ContactModal";
+import { openContactModal } from "./openContactModal";
 
 export default function Header() {
   const [dark, setDark] = useState(true);
