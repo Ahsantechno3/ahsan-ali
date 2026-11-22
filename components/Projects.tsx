@@ -222,13 +222,13 @@ const ProjectCard = memo(function ProjectCard({ project }: { project: Project })
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`${project.title} — open live demo`}
-            className="absolute right-3 top-3 z-20 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur transition-all duration-300 group-hover:right-0 group-hover:top-0 group-hover:h-[92px] group-hover:w-[92px] group-hover:bg-[#89FF00] group-hover:text-[#080A07] hover:bg-[#89FF00] hover:text-[#080A07] dark:group-hover:bg-[#C6FF00] dark:hover:bg-[#C6FF00]"
+            className="absolute right-3 top-3 z-20 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur transition-all duration-300 group-hover:right-[-34px] group-hover:top-[-34px] group-hover:h-[128px] group-hover:w-[128px] group-hover:bg-[#89FF00] group-hover:text-[#080A07] hover:bg-[#89FF00] hover:text-[#080A07] dark:group-hover:bg-[#C6FF00] dark:hover:bg-[#C6FF00]"
           >
-            <ArrowUpRight className="h-[14px] w-[14px] [stroke-width:2] transition-all duration-300 group-hover:h-[54px] group-hover:w-[54px] group-hover:translate-x-[7px] group-hover:-translate-y-[7px] group-hover:[stroke-width:3]" />
+            <ArrowUpRight className="h-[14px] w-[14px] [stroke-width:2] transition-all duration-300 group-hover:h-[54px] group-hover:w-[54px] group-hover:-translate-x-[10px] group-hover:translate-y-[10px] group-hover:[stroke-width:3]" />
           </a>
         ) : (
-          <span className="absolute right-3 top-3 z-20 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur transition-all duration-300 group-hover:right-0 group-hover:top-0 group-hover:h-[92px] group-hover:w-[92px] group-hover:bg-[#89FF00] group-hover:text-[#080A07] dark:group-hover:bg-[#C6FF00]">
-            <ArrowUpRight className="h-[14px] w-[14px] [stroke-width:2] transition-all duration-300 group-hover:h-[54px] group-hover:w-[54px] group-hover:translate-x-[7px] group-hover:-translate-y-[7px] group-hover:[stroke-width:3]" />
+          <span className="absolute right-3 top-3 z-20 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur transition-all duration-300 group-hover:right-[-34px] group-hover:top-[-34px] group-hover:h-[128px] group-hover:w-[128px] group-hover:bg-[#89FF00] group-hover:text-[#080A07] dark:group-hover:bg-[#C6FF00]">
+            <ArrowUpRight className="h-[14px] w-[14px] [stroke-width:2] transition-all duration-300 group-hover:h-[54px] group-hover:w-[54px] group-hover:-translate-x-[10px] group-hover:translate-y-[10px] group-hover:[stroke-width:3]" />
           </span>
         )}
       </div>
