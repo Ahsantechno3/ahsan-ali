@@ -204,11 +204,18 @@ type ParticleMode = "out" | "in" | "peek";
 function ParticleCanvas({
   mode,
   scatter = "up",
+  layer = "front",
 }: {
   mode: ParticleMode;
   scatter?: "up" | "down";
+  layer?: "back" | "front";
 }) {
   const ref = useRef<HTMLCanvasElement>(null);
+  // Fine dot grid (Ahsan: bareek + zyada). Peek is marginally finer.
+  const spacing = mode === "peek" ? 3.5 : 4;
+  // Front/back canvases spill past the card box so dots can fly over /
+  // behind neighbouring cards instead of being clipped at the card edge.
+  const pad = mode === "peek" ? 0 : 20;
 
   useEffect(() => {
     const canvas = ref.current;
@@ -218,8 +225,8 @@ function ParticleCanvas({
     const w = parent.clientWidth;
     const h = parent.clientHeight;
     if (w === 0 || h === 0) return;
-    canvas.width = w;
-    canvas.height = h;
+    canvas.width = w + pad * 2;
+    canvas.height = h + pad * 2;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
@@ -229,10 +236,9 @@ function ParticleCanvas({
       ? ["#E9EEE2", "#9AA393", "#454B40", neon, neon]
       : ["#151A10", "#5C6650", "#C4CCB6", neon, "#458000"];
 
-    const spacing = mode === "peek" ? 8 : 10;
     type Dot = {
       x: number; y: number; r: number; c: string;
-      dx: number; dy: number; delay: number;
+      dx: number; dy: number; delay: number; layer: "back" | "front";
     };
     const dots: Dot[] = [];
     // Deterministic pseudo-random so SSR/hydration never matters (canvas only).
@@ -245,20 +251,24 @@ function ParticleCanvas({
       for (let x = spacing / 2; x < w; x += spacing) {
         const dirY = scatter === "up" ? -1 : 1;
         dots.push({
-          x: x + (rand() - 0.5) * 4,
-          y: y + (rand() - 0.5) * 4,
-          r: 1 + rand() * 1.4,
+          x: pad + x + (rand() - 0.5) * 4,
+          y: pad + y + (rand() - 0.5) * 4,
+          r: 0.4 + rand() * 0.7,
           c: palette[Math.floor(rand() * palette.length)],
           dx: (rand() - 0.5) * 56,
           dy: dirY * (30 + rand() * 130),
           delay: rand() * 0.25,
+          // Same deterministic sequence in both layer canvases, so the
+          // back/front split is complementary, never duplicated.
+          layer: rand() < 0.5 ? "back" : "front",
         });
       }
     }
 
     const draw = (p: number) => {
-      ctx.clearRect(0, 0, w, h);
+      ctx.clearRect(0, 0, w + pad * 2, h + pad * 2);
       for (const d of dots) {
+        if (d.layer !== layer) continue;
         let px = d.x, py = d.y, alpha = 1;
         if (mode === "out") {
           const t = Math.min(1, Math.max(0, (p - d.delay) / (1 - d.delay)));
@@ -299,13 +309,23 @@ function ParticleCanvas({
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [mode, scatter]);
+  }, [mode, scatter, layer, pad]);
 
   return (
     <canvas
       ref={ref}
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 z-20 h-full w-full"
+      data-particle-layer={layer}
+      data-particle-spacing={spacing}
+      className="pointer-events-none absolute"
+      style={{
+        top: -pad,
+        left: -pad,
+        width: `calc(100% + ${pad * 2}px)`,
+        height: `calc(100% + ${pad * 2}px)`,
+        // Depth split: back dots behind the card body, front dots above it.
+        zIndex: layer === "back" ? 0 : 30,
+      }}
     />
   );
 }
@@ -323,9 +343,13 @@ function ProjectCard({
 }) {
   const Visual = visuals[project.title] ?? SneakerVisual;
   return (
+    <div className="relative h-full">
+      {particle ? (
+        <ParticleCanvas mode={particle} scatter={scatter} layer="back" />
+      ) : null}
     <article
       data-project-card={project.title}
-      className="card-surface group relative flex h-full flex-col overflow-hidden !rounded-[14px]"
+      className="card-surface group relative z-10 flex h-full flex-col overflow-hidden !rounded-[14px]"
     >
       <div className="relative h-44 shrink-0 overflow-hidden">
         <div className="h-full transition duration-500 group-hover:scale-[1.06]">
@@ -347,13 +371,13 @@ function ProjectCard({
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`${project.title} — open live demo`}
-            className="absolute right-3 top-3 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-[#89FF00] text-[#080A07] backdrop-blur transition-all duration-300 hover:bg-[#89FF00] dark:bg-[#C6FF00] dark:hover:bg-[#C6FF00] sm:h-7 sm:w-7 sm:bg-black/60 sm:text-white sm:hover:bg-[#89FF00] sm:hover:text-[#080A07] sm:group-hover:h-11 sm:group-hover:w-11 sm:group-hover:bg-[#89FF00] sm:group-hover:text-[#080A07] sm:dark:hover:bg-[#C6FF00] sm:dark:group-hover:bg-[#C6FF00]"
+            className="absolute right-3 top-3 z-20 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur transition-all duration-300 group-hover:right-0 group-hover:top-0 group-hover:h-[92px] group-hover:w-[92px] group-hover:bg-[#89FF00] group-hover:text-[#080A07] hover:bg-[#89FF00] hover:text-[#080A07] dark:group-hover:bg-[#C6FF00] dark:hover:bg-[#C6FF00]"
           >
-            <ArrowUpRight className="h-5 w-5 transition-all duration-300 sm:h-[14px] sm:w-[14px] sm:group-hover:h-5 sm:group-hover:w-5" />
+            <ArrowUpRight className="h-[14px] w-[14px] transition-all duration-300 group-hover:h-9 group-hover:w-9" />
           </a>
         ) : (
-          <span className="absolute right-3 top-3 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-[#89FF00] text-[#080A07] backdrop-blur transition-all duration-300 dark:bg-[#C6FF00] sm:h-7 sm:w-7 sm:bg-black/60 sm:text-white sm:group-hover:h-11 sm:group-hover:w-11 sm:group-hover:bg-[#89FF00] sm:group-hover:text-[#080A07] sm:dark:group-hover:bg-[#C6FF00]">
-            <ArrowUpRight className="h-5 w-5 transition-all duration-300 sm:h-[14px] sm:w-[14px] sm:group-hover:h-5 sm:group-hover:w-5" />
+          <span className="absolute right-3 top-3 z-20 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur transition-all duration-300 group-hover:right-0 group-hover:top-0 group-hover:h-[92px] group-hover:w-[92px] group-hover:bg-[#89FF00] group-hover:text-[#080A07] dark:group-hover:bg-[#C6FF00]">
+            <ArrowUpRight className="h-[14px] w-[14px] transition-all duration-300 group-hover:h-9 group-hover:w-9" />
           </span>
         )}
       </div>
@@ -387,8 +411,11 @@ function ProjectCard({
           <ArrowRight size={14} className="transition group-hover:translate-x-0.5" />
         </button>
       </div>
-      {particle ? <ParticleCanvas mode={particle} scatter={scatter} /> : null}
     </article>
+      {particle ? (
+        <ParticleCanvas mode={particle} scatter={scatter} layer="front" />
+      ) : null}
+    </div>
   );
 }
 
@@ -491,7 +518,8 @@ export default function Projects() {
     return (
       <motion.div
         key={`${project.title}-anim`}
-        className="h-full"
+        className="relative h-full"
+        style={{ zIndex: role === "enter" ? 20 : 10 }}
         initial={
           role === "enter"
             ? { opacity: 0, y: anim.dir === 1 ? 56 : -56 }
@@ -542,9 +570,9 @@ export default function Projects() {
         >
           <div className="flex items-stretch gap-3 sm:gap-4">
             <div className="relative min-w-0 flex-1">
-              <div className="grid h-full gap-5 sm:grid-cols-3">
+              <div className="relative z-10 grid h-full gap-5 sm:grid-cols-3">
                 {visible.map((project, i) => (
-                  <div key={project.title} className="h-full min-w-0">
+                  <div key={project.title} className="relative z-10 h-full min-w-0">
                     {renderSlot(project, i)}
                   </div>
                 ))}
@@ -554,7 +582,8 @@ export default function Projects() {
               {anim && exitingProject ? (
                 <motion.div
                   aria-hidden="true"
-                  className="pointer-events-none absolute top-0 z-30 h-full"
+                  data-exiting-card="true"
+                  className="pointer-events-none absolute top-0 z-40 h-full overflow-visible"
                   style={{
                     left:
                       anim.dir === 1 || isMobile
@@ -584,7 +613,7 @@ export default function Projects() {
                 <div
                   aria-hidden="true"
                   data-peek-card={peekProject.title}
-                  className="relative mt-5 h-[110px] overflow-hidden rounded-[14px] opacity-70"
+                  className="relative z-0 mt-5 h-[110px] overflow-hidden rounded-[14px] opacity-70"
                   style={{
                     maskImage:
                       "linear-gradient(to bottom, black 25%, transparent 98%)",
@@ -600,7 +629,7 @@ export default function Projects() {
             </div>
 
             {/* navigation buttons — right side, diagonal arrows */}
-            <div className="flex shrink-0 flex-col items-center justify-center gap-3">
+            <div className="relative z-40 flex shrink-0 flex-col items-center justify-center gap-3">
               <button
                 type="button"
                 onClick={next}
@@ -624,7 +653,7 @@ export default function Projects() {
 
           {/* carousel dots — below the cards, all devices */}
           <div
-            className="mt-6 flex items-center justify-center gap-2"
+            className="relative z-40 mt-6 flex items-center justify-center gap-2"
             role="tablist"
             aria-label="Project sets"
           >
