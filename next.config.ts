@@ -14,10 +14,7 @@ const securityHeaders = [
     key: "Content-Security-Policy",
     value: [
       "default-src 'self'",
-      // 'wasm-unsafe-eval' sirf WebAssembly compile ki ijazat deta hai
-      // (JS eval ki nahi) — Hero ke meshopt-compressed 3D model ka decoder
-      // WASM use karta hai, is ke baghair model load nahi hota
-      "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'",
+      "script-src 'self' 'unsafe-inline'",
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob:",
       "font-src 'self' data:",

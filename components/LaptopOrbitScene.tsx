@@ -3,7 +3,6 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 
@@ -272,7 +271,7 @@ export default function LaptopOrbitScene() {
     const textureLoader = new THREE.TextureLoader();
 
     const screenTexture = textureLoader.load(
-      "/images/screen-texture.webp",
+      "/images/screen-texture.jpg",
       (texture) => {
         texture.flipY = false;
         texture.colorSpace = THREE.SRGBColorSpace;
@@ -525,9 +524,6 @@ export default function LaptopOrbitScene() {
     }
 
     const loader = new GLTFLoader();
-    // Model meshopt-compressed hai (642 KB → 124 KB) — decoder ke baghair
-    // load nahi hoga. Scene ki look/CONFIG bilkul waisi hi rehti hai.
-    loader.setMeshoptDecoder(MeshoptDecoder);
     loader.load(
       "/models/mac-noUv.glb",
       (glb) => {
