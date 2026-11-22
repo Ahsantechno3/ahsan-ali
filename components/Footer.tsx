@@ -45,7 +45,8 @@ export default function Footer() {
           {/* copyright — neeche wali bar se utha kar center mein, jahan
               pehle socials the */}
           <p className="flex flex-wrap items-center justify-center gap-1.5 text-center text-[12.5px] text-[#11150D]/50 dark:text-[#A5AAA0]">
-            © {new Date().getFullYear()}. All rights reserved. Designed with
+            © {new Date().getFullYear()} Ahsan Ali. All rights reserved.
+            Designed &amp; built by Ahsan Ali with
             <Heart size={12} className="text-red-500" fill="#ef4444" />
             for a better web.
           </p>
