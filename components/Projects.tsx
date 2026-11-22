@@ -316,8 +316,9 @@ export default function Projects() {
   // Mirrored flow (Ahsan's direction inversion): on NEXT the cards travel
   // LEFT→RIGHT — position 3 exits, 1→2 and 2→3 slide right, the new card
   // enters at position 1 — so the window steps BACK through the same
-  // rotation. PREV is the exact reverse. The dots are untouched: they
-  // still follow `start` exactly as before.
+  // rotation. PREV is the exact reverse. The dots are remapped to match
+  // (see the dots block): their active light travels left→right on NEXT
+  // too, in sync with the cards.
   const next = useCallback(() => {
     goTo(stateRef.current.start - 1, 1);
   }, [goTo]);
@@ -520,30 +521,43 @@ export default function Projects() {
             </div>
           </div>
 
-          {/* carousel dots — below the cards, all devices */}
+          {/* carousel dots — below the cards, all devices. Mirrored
+              mapping: dot i (counting left→right) stands for the window
+              starting at (total - i) % total, so when NEXT steps the
+              window back through the rotation, the ACTIVE dot still
+              travels LEFT→RIGHT — the same direction as the cards —
+              and clicking a dot jumps to exactly the set it marks. */}
           <div
             className="relative z-40 mt-6 flex items-center justify-center gap-2"
             role="tablist"
             aria-label="Project sets"
           >
-            {projects.map((project, i) => (
-              <button
-                key={project.title}
-                type="button"
-                role="tab"
-                aria-selected={i === start}
-                aria-label={`Show projects starting with ${project.title}`}
-                data-carousel-dot={i}
-                onClick={() =>
-                  goTo(i, (i - start + total) % total <= total / 2 ? 1 : -1)
-                }
-                className={`h-2.5 rounded-full transition-all duration-300 ${
-                  i === start
-                    ? "w-7 bg-[#89FF00] dark:bg-[#C6FF00]"
-                    : "w-2.5 bg-black/20 hover:bg-black/35 dark:bg-white/20 dark:hover:bg-white/35"
-                }`}
-              />
-            ))}
+            {projects.map((project, i) => {
+              const dotStart = (total - i) % total;
+              const activeDot = (total - start) % total;
+              const isActive = i === activeDot;
+              return (
+                <button
+                  key={project.title}
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  aria-label={`Show projects starting with ${projects[dotStart].title}`}
+                  data-carousel-dot={i}
+                  onClick={() =>
+                    goTo(
+                      dotStart,
+                      (i - activeDot + total) % total <= total / 2 ? 1 : -1,
+                    )
+                  }
+                  className={`h-2.5 rounded-full transition-all duration-300 ${
+                    isActive
+                      ? "w-7 bg-[#89FF00] dark:bg-[#C6FF00]"
+                      : "w-2.5 bg-black/20 hover:bg-black/35 dark:bg-white/20 dark:hover:bg-white/35"
+                  }`}
+                />
+              );
+            })}
           </div>
         </div>
       </div>
