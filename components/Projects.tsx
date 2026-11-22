@@ -526,9 +526,16 @@ export default function Projects() {
               starting at (total - i) % total, so when NEXT steps the
               window back through the rotation, the ACTIVE dot still
               travels LEFT→RIGHT — the same direction as the cards —
-              and clicking a dot jumps to exactly the set it marks. */}
+              and clicking a dot jumps to exactly the set it marks.
+              CENTRING: the row spans the carousel width, but the cards
+              occupy only the stage (carousel minus the right-side
+              buttons column: 44px buttons + 12px gap on mobile, 16px
+              gap from sm up). The right padding below (56px / 60px)
+              reserves exactly that buttons column inside this row, so
+              the dots centre on the CARD AREA's centre at every
+              breakpoint — not on stage+buttons combined. */}
           <div
-            className="relative z-40 mt-6 flex items-center justify-center gap-2"
+            className="relative z-40 mt-6 flex items-center justify-center gap-2 pr-[56px] sm:pr-[60px]"
             role="tablist"
             aria-label="Project sets"
           >
