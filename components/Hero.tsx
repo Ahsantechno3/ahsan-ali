@@ -148,6 +148,20 @@ export default function Hero() {
               bhi GSAP ke xPercent se hoti hai) */}
           <div ref={poolRef} className="pointer-events-none absolute bottom-[4%] left-1/2 h-24 w-[78%] rounded-[100%] bg-[#89FF00]/30 dark:bg-[#C6FF00]/30 blur-[46px]" />
 
+          {/* ── Neon smoke (Tailwind/CSS only, koi JS nahi) ──────
+              Laptop ke neeche behta hua neon dhuan: 3 blurred layers,
+              har aik ki apni drift animation (globals.css: smoke-a/b/c).
+              Ye layers GSAP wale pool se ALAG elements hain — GSAP
+              inhein touch nahi karta, is liye transform conflict nahi.
+              Mobile par sirf pehli (sab se halki) layer dikhti hai.
+              Tweak: size/opacity yahan ki classes se, speed/drift
+              globals.css ke smokeDrift keyframes se badlo. */}
+          <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-[2%] h-[34%]">
+            <div className="smoke-a absolute bottom-0 left-[6%] h-20 w-[62%] rounded-[100%] bg-[#89FF00]/20 blur-[38px] dark:bg-[#C6FF00]/28 sm:h-24" />
+            <div className="smoke-b absolute bottom-[12%] left-[30%] hidden h-16 w-[52%] rounded-[100%] bg-[#89FF00]/15 blur-[30px] dark:bg-[#C6FF00]/20 sm:block" />
+            <div className="smoke-c absolute bottom-[26%] left-[16%] hidden h-12 w-[40%] rounded-[100%] bg-[#89FF00]/10 blur-[24px] dark:bg-[#C6FF00]/15 sm:block" />
+          </div>
+
           {/* 3D MacBook orbit scene */}
           <div className="absolute inset-0">
             <LaptopOrbitScene />
