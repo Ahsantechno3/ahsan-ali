@@ -135,32 +135,6 @@ export default function Hero() {
             </a>
           </motion.div>
 
-          {/* Trusted-by row: overlapping avatar initials, generic wording */}
-          <motion.div
-            {...fadeUp}
-            transition={{ duration: 0.55, delay: 0.42 }}
-            className="mt-9 flex items-center gap-3.5"
-          >
-            <div className="flex -space-x-3">
-              {[
-                { initials: "AR", bg: "from-lime-200 to-emerald-500" },
-                { initials: "KS", bg: "from-amber-200 to-orange-400" },
-                { initials: "MJ", bg: "from-sky-200 to-indigo-400" },
-                { initials: "DT", bg: "from-rose-200 to-pink-500" },
-              ].map((a) => (
-                <span
-                  key={a.initials}
-                  className={`flex h-10 w-10 items-center justify-center rounded-full border-2 border-[#F7F9F4] bg-gradient-to-br text-[11px] font-bold text-black/70 dark:border-[#080A07] ${a.bg}`}
-                >
-                  {a.initials}
-                </span>
-              ))}
-            </div>
-            <p className="text-[13px] font-medium leading-snug text-[#11150D]/70 dark:text-[#A5AAA0]">
-              Trusted by clients who
-              <br className="hidden sm:block" /> value quality &amp; results
-            </p>
-          </motion.div>
         </div>
 
         {/* ── Hero visual ─────────────────────────────────────── */}
