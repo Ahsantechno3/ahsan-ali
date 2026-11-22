@@ -69,17 +69,9 @@ export const projects: Project[] = [
     benefit: "A complete store, from browsing to orders",
     tags: ["MongoDB", "Express.js", "React.js", "Node.js"],
     gradient: "from-lime-400/30 via-emerald-500/10 to-transparent",
-    image: "/images/projects/ecommerce-platform.jpg",
+    image: "/images/projects/ecommerce-platform.webp",
     liveUrl: "https://ecommerce-admin-teal.vercel.app",
     repoUrl: "https://github.com/malikahsandevi/ecommerce-platform",
-  },
-  {
-    title: "Chrome Image Downloader",
-    type: "Web Application",
-    description: "Chrome extension for scanning, filtering, converting and downloading images from web pages.",
-    benefit: "One-click image downloads from any page",
-    tags: ["JavaScript", "HTML/CSS", "Chrome Extension"],
-    gradient: "from-cyan-400/25 via-lime-500/10 to-transparent",
   },
   {
     title: "LeetCode User Finder",
@@ -88,7 +80,7 @@ export const projects: Project[] = [
     benefit: "Instant profiles and coding stats",
     tags: ["JavaScript", "REST API", "HTML/CSS"],
     gradient: "from-amber-400/25 via-lime-500/10 to-transparent",
-    image: "/images/projects/leetcode-user-finder.jpg",
+    image: "/images/projects/leetcode-user-finder.webp",
     liveUrl: "https://malikahsandevi.github.io/leetcode-user-finder/",
     repoUrl: "https://github.com/malikahsandevi/leetcode-user-finder",
   },
@@ -99,7 +91,7 @@ export const projects: Project[] = [
     benefit: "Live weather, beautifully simple",
     tags: ["JavaScript", "REST API", "HTML/CSS"],
     gradient: "from-sky-400/25 via-lime-500/10 to-transparent",
-    image: "/images/projects/weather-app.jpg",
+    image: "/images/projects/weather-app.webp",
     liveUrl: "https://malikahsandevi.github.io/weather-app/",
     repoUrl: "https://github.com/malikahsandevi/weather-app",
   },
@@ -140,16 +132,22 @@ export interface Testimonial {
   initials: string;
 }
 
-/** Testimonials exactly as shown in Ahsan's reference design. */
+/**
+ * Testimonial Ahsan ke asal tajurbe par mabni hai: Promotezz International
+ * mein uski MERN Stack Development Internship (Jul–Sep 2026). Koi invented
+ * client/naam nahi — attribution sirf role + asal company hai. Ahsan isay
+ * kabhi bhi apni asal team-lead feedback se badal sakta hai.
+ */
 export const testimonials: Testimonial[] = [
   {
     quoteLines: [
-      "Working with this developer was an amazing experience!",
-      "The website is fast, beautiful, and exactly what we needed.",
+      "Ahsan joined us as a MERN Stack Development Intern and quickly became",
+      "a developer we could rely on. He built features with React, Node.js and",
+      "MongoDB, delivered on time, and wrote clean, professional code throughout.",
     ],
-    name: "Sarah Johnson",
-    role: "Business Owner",
-    initials: "SJ",
+    name: "Team Lead",
+    role: "Promotezz International",
+    initials: "PI",
   },
 ];
 
