@@ -23,10 +23,16 @@ const icons: Record<string, LucideIcon> = {
 
 export default function Services() {
   return (
-    <section id="services" className="relative overflow-hidden">
+    <section id="services" className="relative overflow-clip">
       <div className="pointer-events-none absolute -left-24 top-40 h-72 w-72 rounded-full bg-[#89FF00]/6 dark:bg-[#C6FF00]/6 blur-[120px]" />
       <div className="relative mx-auto grid max-w-7xl gap-10 px-5 py-12 lg:grid-cols-[290px_1fr] lg:gap-12 lg:px-8 lg:py-14">
-        {/* left header column, reference style */}
+        {/* left header column, reference style — STICKY on desktop,
+            same treatment as the Projects section (Ahsan: "what i offer
+            ko stick karo"): pinned under the header while the Services
+            section scrolls past, releases at the section end. Only at
+            lg, where the two-column layout applies; stacked layouts
+            (mobile/tablet) scroll normally. */}
+        <div className="lg:sticky lg:top-24 lg:self-start">
         <Reveal>
           <SectionTag>What I Offer</SectionTag>
           <h2 className="mt-4 text-4xl font-bold leading-[1.08] tracking-tight sm:text-[44px]">
@@ -43,6 +49,7 @@ export default function Services() {
             Explore Services <ArrowRight size={14} />
           </a>
         </Reveal>
+        </div>
 
         {/* 3 × 2 card grid */}
         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
