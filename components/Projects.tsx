@@ -193,160 +193,11 @@ const visuals: Record<string, ComponentType> = {
   "Real Estate Platform": RealEstateVisual,
 };
 
-/* ── Particle dissolve / materialise overlay ────────────────────
-   A grid of dots sampled over the card's box. "out": dots scatter
-   away and fade (destroy). "in": scattered dots converge onto the
-   grid and fade as the solid card appears (create). "peek": a
-   static half-dissolved dot layer for the mobile next-card hint. */
-
-type ParticleMode = "out" | "in" | "peek";
-
-function ParticleCanvas({
-  mode,
-  scatter = "up",
-  layer = "front",
-}: {
-  mode: ParticleMode;
-  scatter?: "up" | "down";
-  layer?: "back" | "front";
-}) {
-  const ref = useRef<HTMLCanvasElement>(null);
-  // Fine dot grid (Ahsan: bareek + zyada). Peek is marginally finer.
-  const spacing = mode === "peek" ? 3.5 : 4;
-  // Front/back canvases spill past the card box so dots can fly over /
-  // behind neighbouring cards instead of being clipped at the card edge.
-  const pad = mode === "peek" ? 0 : 20;
-
-  useEffect(() => {
-    const canvas = ref.current;
-    if (!canvas) return;
-    const parent = canvas.parentElement;
-    if (!parent) return;
-    const w = parent.clientWidth;
-    const h = parent.clientHeight;
-    if (w === 0 || h === 0) return;
-    canvas.width = w + pad * 2;
-    canvas.height = h + pad * 2;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const dark = document.documentElement.classList.contains("dark");
-    const neon = dark ? "#C6FF00" : "#89FF00";
-    const palette = dark
-      ? ["#E9EEE2", "#9AA393", "#454B40", neon, neon]
-      : ["#151A10", "#5C6650", "#C4CCB6", neon, "#458000"];
-
-    type Dot = {
-      x: number; y: number; r: number; c: string;
-      dx: number; dy: number; delay: number; layer: "back" | "front";
-    };
-    const dots: Dot[] = [];
-    // Deterministic pseudo-random so SSR/hydration never matters (canvas only).
-    let seed = mode === "in" ? 1234567 : mode === "out" ? 7654321 : 2468135;
-    const rand = () => {
-      seed = (seed * 1103515245 + 12345) % 2147483648;
-      return seed / 2147483648;
-    };
-    for (let y = spacing / 2; y < h; y += spacing) {
-      for (let x = spacing / 2; x < w; x += spacing) {
-        const dirY = scatter === "up" ? -1 : 1;
-        dots.push({
-          x: pad + x + (rand() - 0.5) * 4,
-          y: pad + y + (rand() - 0.5) * 4,
-          r: 0.4 + rand() * 0.7,
-          c: palette[Math.floor(rand() * palette.length)],
-          dx: (rand() - 0.5) * 56,
-          dy: dirY * (30 + rand() * 130),
-          delay: rand() * 0.25,
-          // Same deterministic sequence in both layer canvases, so the
-          // back/front split is complementary, never duplicated.
-          layer: rand() < 0.5 ? "back" : "front",
-        });
-      }
-    }
-
-    const draw = (p: number) => {
-      ctx.clearRect(0, 0, w + pad * 2, h + pad * 2);
-      for (const d of dots) {
-        if (d.layer !== layer) continue;
-        let px = d.x, py = d.y, alpha = 1;
-        if (mode === "out") {
-          const t = Math.min(1, Math.max(0, (p - d.delay) / (1 - d.delay)));
-          const e = t * t;
-          px = d.x + d.dx * e;
-          py = d.y + d.dy * e;
-          alpha = (1 - t) * 0.95;
-        } else if (mode === "in") {
-          const t = Math.min(1, Math.max(0, (p - d.delay * 0.4) / (1 - d.delay * 0.4)));
-          const e = 1 - (1 - t) * (1 - t);
-          px = d.x + d.dx * (1 - e);
-          py = d.y - d.dy * (1 - e); // converge from the opposite side
-          alpha = t < 0.65 ? 0.95 : 1 - (t - 0.65) / 0.35;
-        } else {
-          alpha = 0.12 + ((d.x * 7 + d.y * 13) % 10) / 18;
-        }
-        if (alpha <= 0.01) continue;
-        ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
-        ctx.fillStyle = d.c;
-        ctx.beginPath();
-        ctx.arc(px, py, d.r, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.globalAlpha = 1;
-    };
-
-    if (mode === "peek") {
-      draw(0);
-      return;
-    }
-    const duration = 1050; // synced with ANIM_MS below
-    let raf = 0;
-    const t0 = performance.now();
-    const tick = (now: number) => {
-      const p = Math.min(1, (now - t0) / duration);
-      draw(p);
-      if (p < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [mode, scatter, layer, pad]);
-
-  return (
-    <canvas
-      ref={ref}
-      aria-hidden="true"
-      data-particle-layer={layer}
-      data-particle-spacing={spacing}
-      className="pointer-events-none absolute"
-      style={{
-        top: -pad,
-        left: -pad,
-        width: `calc(100% + ${pad * 2}px)`,
-        height: `calc(100% + ${pad * 2}px)`,
-        // Depth split: back dots behind the card body, front dots above it.
-        zIndex: layer === "back" ? 0 : 30,
-      }}
-    />
-  );
-}
-
 /* ── One project card (unchanged content + growing live badge) ─── */
 
-function ProjectCard({
-  project,
-  particle,
-  scatter,
-}: {
-  project: Project;
-  particle?: ParticleMode;
-  scatter?: "up" | "down";
-}) {
+function ProjectCard({ project }: { project: Project }) {
   const Visual = visuals[project.title] ?? SneakerVisual;
   return (
-    <div className="relative h-full">
-      {particle ? (
-        <ParticleCanvas mode={particle} scatter={scatter} layer="back" />
-      ) : null}
     <article
       data-project-card={project.title}
       className="card-surface group relative z-10 flex h-full flex-col overflow-hidden !rounded-[14px]"
@@ -412,14 +263,10 @@ function ProjectCard({
         </button>
       </div>
     </article>
-      {particle ? (
-        <ParticleCanvas mode={particle} scatter={scatter} layer="front" />
-      ) : null}
-    </div>
   );
 }
 
-/* ── Section with the 3-card particle carousel ──────────────────── */
+/* ── Section with the 3-card carousel ─────────────────────────── */
 
 const ANIM_MS = 1050;
 
@@ -543,11 +390,7 @@ export default function Projects() {
           opacity: { duration: ANIM_MS / 1000, ease: "linear" },
         }}
       >
-        <ProjectCard
-          project={project}
-          particle={role === "enter" ? "in" : undefined}
-          scatter={anim.dir === 1 ? "up" : "down"}
-        />
+        <ProjectCard project={project} />
       </motion.div>
     );
   };
@@ -593,7 +436,7 @@ export default function Projects() {
                 ))}
               </div>
 
-              {/* exiting card: destroys into particles as it leaves */}
+              {/* exiting card: grows and fades out slowly as it leaves */}
               {anim && exitingProject ? (
                 <motion.div
                   aria-hidden="true"
@@ -627,15 +470,11 @@ export default function Projects() {
                     opacity: { duration: ANIM_MS / 1000, ease: "linear" },
                   }}
                 >
-                  <ProjectCard
-                    project={exitingProject}
-                    particle="out"
-                    scatter={anim.dir === 1 ? "up" : "down"}
-                  />
+                  <ProjectCard project={exitingProject} />
                 </motion.div>
               ) : null}
 
-              {/* mobile only: next card peeking below in destroyed form */}
+              {/* mobile only: next card peeking below, clipped with a fade */}
               {isMobile && !anim ? (
                 <div
                   aria-hidden="true"
@@ -649,7 +488,7 @@ export default function Projects() {
                   }}
                 >
                   <div className="pointer-events-none relative">
-                    <ProjectCard project={peekProject} particle="peek" />
+                    <ProjectCard project={peekProject} />
                   </div>
                 </div>
               ) : null}
