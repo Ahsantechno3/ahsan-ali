@@ -208,9 +208,14 @@ const ProjectCard = memo(function ProjectCard({ project }: { project: Project })
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={project.image}
+              srcSet={`${project.image.replace(/\.webp$/, "-480.webp")} 480w, ${project.image.replace(/\.webp$/, "-768.webp")} 768w, ${project.image} 1280w`}
+              sizes="(max-width: 639px) 92vw, (max-width: 1023px) 31vw, 313px"
+              width={1280}
+              height={720}
               alt={`${project.title} — live app screenshot`}
               className="h-full w-full object-cover object-top"
               loading="lazy"
+              decoding="async"
             />
           ) : (
             <Visual />
@@ -468,6 +473,7 @@ export default function Projects() {
               {anim && exitingProject ? (
                 <motion.div
                   aria-hidden="true"
+                  inert
                   data-exiting-card="true"
                   className="pointer-events-none absolute top-0 z-40 h-full overflow-visible"
                   style={{
@@ -545,7 +551,7 @@ export default function Projects() {
               the dots centre on the CARD AREA's centre at every
               breakpoint — not on stage+buttons combined. */}
           <div
-            className="relative z-40 mt-6 flex items-center justify-center gap-2 pr-[56px] sm:pr-[60px]"
+            className="relative z-40 mt-6 flex items-center justify-center gap-0 pr-[56px] sm:pr-[60px]"
             role="tablist"
             aria-label="Project sets"
           >
@@ -567,12 +573,23 @@ export default function Projects() {
                       (i - activeDot + total) % total <= total / 2 ? 1 : -1,
                     )
                   }
-                  className={`h-2.5 rounded-full transition-all duration-300 ${
-                    isActive
-                      ? "w-7 bg-[#89FF00] dark:bg-[#C6FF00]"
-                      : "w-2.5 bg-black/20 hover:bg-black/35 dark:bg-white/20 dark:hover:bg-white/35"
+                  className={`group relative -my-[7px] flex h-6 items-center justify-center ${
+                    isActive ? "w-[44px]" : "w-6"
                   }`}
-                />
+                >
+                  {/* visible pill — size/colour/transition bilkul pehle
+                      jaisi; button aik bara, non-overlapping touch
+                      target hai (24px buland, pill pitch 24px+) taake
+                      touch-target audit pass ho; -my se row ki height
+                      bilkul pehle jaisi (10px) rehti hai */}
+                  <span
+                    className={`h-2.5 rounded-full transition-all duration-300 ${
+                      isActive
+                        ? "w-7 bg-[#89FF00] dark:bg-[#C6FF00]"
+                        : "w-2.5 bg-black/20 group-hover:bg-black/35 dark:bg-white/20 dark:group-hover:bg-white/35"
+                    }`}
+                  />
+                </button>
               );
             })}
           </div>
