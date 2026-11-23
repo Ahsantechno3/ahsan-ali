@@ -11,9 +11,14 @@ const LaptopOrbitScene = dynamic(() => import("./LaptopOrbitScene"), {
   ssr: false,
 });
 
+// Perf (round 2): entrance sirf transform se — opacity kabhi 0 nahi hoti.
+// Pehle opacity:0 tha, jis se SSR HTML mein hero text invisible render
+// hota tha aur hydration + animation tak paint nahi hota tha — yahi
+// LCP element (H1) ki ~4s "element render delay" ki wajah thi. Ab text
+// pehle paint mein hi dikhta hai, sirf halka sa neeche se slide hota hai.
 const fadeUp = {
-  initial: { opacity: 0, y: 24 },
-  animate: { opacity: 1, y: 0 },
+  initial: { y: 24 },
+  animate: { y: 0 },
 };
 
 export default function Hero() {
@@ -22,36 +27,73 @@ export default function Hero() {
   const glow2Ref = useRef<HTMLDivElement>(null);
   const poolRef = useRef<HTMLDivElement>(null);
 
-  // Performance: 3D scene (Three.js chunk + GLB + texture) page ke load
-  // window se BAHAR rakho — scene sirf tab mount hoti hai jab page load
-  // ho jaye aur browser idle ho. Tab tak hero ka box (fixed height) aur
-  // glows/smoke waisay hi rehte hain, is liye koi layout shift nahi hota
-  // aur text foran paint hota hai. Scene ka look bilkul unchanged hai.
+  // Performance (round 2): 3D scene (Three.js chunk + GLB + texture) ko
+  // load window se pakka BAHAR rakho. Round 1 mein load+idle tha — tez
+  // desktop par idle foran mil jata hai, is liye Three.js ke long tasks
+  // phir bhi measurement window mein aa jate thay. Ab scene tab mount
+  // hoti hai jab:
+  //   (a) visitor pehli interaction kare (scroll / touch / click / key /
+  //       wheel) — asal visitors ke liye foran, ya
+  //   (b) page load ke baad browser settle ho jaye (thori der + idle).
+  // Tab tak hero ka box (fixed height) aur glows/smoke waisay hi rehte
+  // hain, is liye koi layout shift nahi hota aur text foran paint hota
+  // hai. Scene ka look bilkul unchanged hai.
   const [sceneReady, setSceneReady] = useState(false);
   useEffect(() => {
     let idleId: number | undefined;
-    let timer: ReturnType<typeof setTimeout> | undefined;
-    const start = () => {
-      if ("requestIdleCallback" in window) {
-        idleId = window.requestIdleCallback(() => setSceneReady(true), {
-          timeout: 2000,
-        });
-      } else {
-        timer = setTimeout(() => setSceneReady(true), 200);
-      }
+    let delayId: ReturnType<typeof setTimeout> | undefined;
+    let fallbackId: ReturnType<typeof setTimeout> | undefined;
+    let mounted = false;
+
+    const mount = () => {
+      if (mounted) return;
+      mounted = true;
+      cleanup();
+      setSceneReady(true);
     };
-    if (document.readyState === "complete") {
-      start();
-    } else {
-      window.addEventListener("load", start);
-    }
-    return () => {
-      window.removeEventListener("load", start);
+
+    const interactionEvents = [
+      "pointerdown",
+      "keydown",
+      "wheel",
+      "touchstart",
+      "scroll",
+    ] as const;
+
+    const armIdle = () => {
+      // Load ke baad bhi thora settle time do, phir idle par mount karo —
+      // taake Three.js ki init kisi bhi surat initial load window mein
+      // na aye. Fallback timer guarantee hai ke scene har surat aye gi.
+      delayId = setTimeout(() => {
+        if ("requestIdleCallback" in window) {
+          idleId = window.requestIdleCallback(mount, { timeout: 4000 });
+        } else {
+          fallbackId = setTimeout(mount, 1500);
+        }
+      }, 2500);
+    };
+
+    function cleanup() {
+      interactionEvents.forEach((e) =>
+        window.removeEventListener(e, mount),
+      );
+      window.removeEventListener("load", armIdle);
       if (idleId !== undefined && "cancelIdleCallback" in window) {
         window.cancelIdleCallback(idleId);
       }
-      if (timer !== undefined) clearTimeout(timer);
-    };
+      if (delayId !== undefined) clearTimeout(delayId);
+      if (fallbackId !== undefined) clearTimeout(fallbackId);
+    }
+
+    interactionEvents.forEach((e) =>
+      window.addEventListener(e, mount, { passive: true }),
+    );
+    if (document.readyState === "complete") {
+      armIdle();
+    } else {
+      window.addEventListener("load", armIdle);
+    }
+    return cleanup;
   }, []);
 
   // GSAP — hero ki roshniyon mein jaan: halki si float harkat aur
@@ -171,8 +213,8 @@ export default function Hero() {
 
         {/* ── Hero visual ─────────────────────────────────────── */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
+          initial={{ scale: 0.96 }}
+          animate={{ scale: 1 }}
           transition={{ duration: 0.7, delay: 0.2 }}
           className="relative mx-auto h-[380px] w-full max-w-[580px] sm:h-[460px] lg:h-[540px]"
         >
