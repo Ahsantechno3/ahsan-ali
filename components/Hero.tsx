@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import gsap from "gsap";
@@ -21,6 +21,38 @@ export default function Hero() {
   const glow1Ref = useRef<HTMLDivElement>(null);
   const glow2Ref = useRef<HTMLDivElement>(null);
   const poolRef = useRef<HTMLDivElement>(null);
+
+  // Performance: 3D scene (Three.js chunk + GLB + texture) page ke load
+  // window se BAHAR rakho — scene sirf tab mount hoti hai jab page load
+  // ho jaye aur browser idle ho. Tab tak hero ka box (fixed height) aur
+  // glows/smoke waisay hi rehte hain, is liye koi layout shift nahi hota
+  // aur text foran paint hota hai. Scene ka look bilkul unchanged hai.
+  const [sceneReady, setSceneReady] = useState(false);
+  useEffect(() => {
+    let idleId: number | undefined;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const start = () => {
+      if ("requestIdleCallback" in window) {
+        idleId = window.requestIdleCallback(() => setSceneReady(true), {
+          timeout: 2000,
+        });
+      } else {
+        timer = setTimeout(() => setSceneReady(true), 200);
+      }
+    };
+    if (document.readyState === "complete") {
+      start();
+    } else {
+      window.addEventListener("load", start);
+    }
+    return () => {
+      window.removeEventListener("load", start);
+      if (idleId !== undefined && "cancelIdleCallback" in window) {
+        window.cancelIdleCallback(idleId);
+      }
+      if (timer !== undefined) clearTimeout(timer);
+    };
+  }, []);
 
   // GSAP — hero ki roshniyon mein jaan: halki si float harkat aur
   // mouse ke saath parallax. (Pehli glow par CSS pulse thi, wo hata
@@ -162,9 +194,10 @@ export default function Hero() {
             <div className="smoke-c absolute bottom-[26%] left-[16%] hidden h-12 w-[40%] rounded-[100%] bg-[#89FF00]/10 blur-[24px] dark:bg-[#C6FF00]/15 sm:block" />
           </div>
 
-          {/* 3D MacBook orbit scene */}
+          {/* 3D MacBook orbit scene — load + idle ke baad mount hoti hai
+              (upar sceneReady dekho); container hamesha maujood hai */}
           <div className="absolute inset-0">
-            <LaptopOrbitScene />
+            {sceneReady && <LaptopOrbitScene />}
           </div>
 
         </motion.div>
